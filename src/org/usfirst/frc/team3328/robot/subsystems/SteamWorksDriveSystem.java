@@ -66,9 +66,11 @@ public class SteamWorksDriveSystem implements DriveSystem {
 	}
 	
 	public double calculateSpeed(double position){
-		double newPosition = (Math.sin(Math.abs(position) - (Math.PI / 2)) + 1) * 2; 
-		return (newPosition * Math.signum(position));
+		//graph this in desmos it works i promise
+		double newPosition = position*position; 
+		return newPosition;
 	}
+	
 	
 	@Override
 	public void stop(){

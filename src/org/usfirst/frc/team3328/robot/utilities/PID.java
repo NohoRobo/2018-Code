@@ -70,6 +70,9 @@ public class PID {
 		
 		integralError += (error * .1);
 //		System.out.println(error);
+		if(Math.abs(error)==0) {
+			iOut=0;
+		}
 		
 		pOut = error * KP;
 		iOut = integralError * KI;
