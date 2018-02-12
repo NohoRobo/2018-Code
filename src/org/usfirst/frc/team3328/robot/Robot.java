@@ -73,7 +73,7 @@ public class Robot extends IterativeRobot {
 					new CANTalon(4)),
 				new SteamWorksArm(
 					new Servo(5)),
-				xbox, //util
+				xbox, //util Omar was here
 				new SteamWorksXbox(0)); //drive
 		auto = new StateMachine(telop, new SendableChooser<Modes>());
 		auto.setMode();

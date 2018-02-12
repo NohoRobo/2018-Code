@@ -9,9 +9,7 @@ public interface DriveSystem {
 	boolean getPlacingGear();
 	
 	ADIS16448_IMU getImu();
-	
-	Tracking getTrack();
-	
+		
 	void resetDistance();
 	
 	double getDistance();
