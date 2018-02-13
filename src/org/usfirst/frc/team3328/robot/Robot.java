@@ -59,13 +59,6 @@ public class Robot extends IterativeRobot {
 						new Talon(1),
 						new Talon(2),
 						new Talon(3)),
-					new Tracking(
-						new NetworkTablesTargetProvider().getTarget(),
-						new Relay(0),
-						new PID(.003, 0, 0), //turning
-						new PID(.05, 0, 3)),
-					new ADIS16448_IMU(),
-					pid),
 				new SteamWorksShooter(
 					new Encoder(4,5),
 					new CANTalon(1),  
@@ -80,7 +73,7 @@ public class Robot extends IterativeRobot {
 					new CANTalon(4)),
 				new SteamWorksArm(
 					new Servo(5)),
-				xbox, //util
+				xbox, //util Omar was here
 				new SteamWorksXbox(0)); //drive
 		auto = new StateMachine(telop, new SendableChooser<Modes>());
 		auto.setMode();

@@ -2,7 +2,7 @@ package org.usfirst.frc.team3328.robotTests;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.usfirst.frc.team3328.robot.subsystems.SteamWorksDriveSystem;
+import org.usfirst.frc.team3328.robot.subsystems.PowerUpDriveSystem;
 import org.usfirst.frc.team3328.robot.utilities.ADIS16448_IMU;
 import org.usfirst.frc.team3328.robot.utilities.DriveEncoders;
 import org.usfirst.frc.team3328.robot.utilities.DriveTalons;
@@ -25,7 +25,7 @@ public class SteamWorksDriveSystemTest {
 	ADIS16448_IMU imu = new ADIS16448_IMU();
 	PID pid = new PID(0.0 ,0.0, 0.0);
 	Tracking track = new Tracking(target, null, pid, pid);
-	SteamWorksDriveSystem drive = new SteamWorksDriveSystem(encoders, talons, track, imu, pid);
+	PowerUpDriveSystem drive = new PowerUpDriveSystem(encoders, talons, track, imu, pid);
 
 	@Test
 	public void controlledMove_yLargerThanX_rightMotorTurnsBackwards() {

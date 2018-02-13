@@ -4,11 +4,9 @@ import org.usfirst.frc.team3328.robot.utilities.ADIS16448_IMU;
 import org.usfirst.frc.team3328.robot.utilities.DriveEncoders;
 import org.usfirst.frc.team3328.robot.utilities.DriveTalons;
 import org.usfirst.frc.team3328.robot.utilities.PID;
-import org.usfirst.frc.team3328.robot.utilities.Tracking;
 
-public class SteamWorksDriveSystem implements DriveSystem {
+public class PowerUpDriveSystem implements DriveSystem {
 	
-	Tracking track;
 	ADIS16448_IMU imu;
 	PID  pid;
 	private DriveTalons talons;
@@ -20,12 +18,10 @@ public class SteamWorksDriveSystem implements DriveSystem {
 	private double gearDistance;
 	boolean placingGear = false;
 	
-	public SteamWorksDriveSystem(DriveEncoders encoders, DriveTalons talons, 
-								Tracking track, ADIS16448_IMU imu, PID pid){
+	public PowerUpDriveSystem(DriveEncoders encoders, DriveTalons talons,
+							  ADIS16448_IMU imu, PID pid){
 		this.encoders = encoders;
 		this.talons = talons;
-		this.track = track;
-		this.track.setGoal(320);
 		this.imu = imu;
 		this.imu.calibrate();
 		this.pid = pid;
@@ -34,11 +30,6 @@ public class SteamWorksDriveSystem implements DriveSystem {
 	@Override
 	public ADIS16448_IMU getImu(){
 		return imu;
-	}
-	
-	@Override
-	public Tracking getTrack(){
-		return track;
 	}
 	
 	@Override
@@ -66,9 +57,11 @@ public class SteamWorksDriveSystem implements DriveSystem {
 	}
 	
 	public double calculateSpeed(double position){
-		double newPosition = (Math.sin(Math.abs(position) - (Math.PI / 2)) + 1) * 2; 
-		return (newPosition * Math.signum(position));
+		//graph this in desmos it works i promise
+		double newPosition = position*position; 
+		return newPosition;
 	}
+	
 	
 	@Override
 	public void stop(){
@@ -128,23 +121,13 @@ public class SteamWorksDriveSystem implements DriveSystem {
 		return placingGear;
 	}
 
-	public void trackingMove(){
-		double turn = track.getTurn();
-		double move = track.getMove();
-		move(turn + move, -turn + move);
-
-	}
 	
 	@Override
 	public void controlledMove(double xAxis, double yAxis){
 		double x = calculateSpeed(xAxis);
 		double y = calculateSpeed(yAxis);
-		if (!track.getTracking(stopped())){
-			move((x + y) / restraint, 
-				(x - y) / restraint);
-		}else{
-			trackingMove();
-		}
+		move((x + y) / restraint, 
+			(x - y) / restraint);
 	}
 
 }
