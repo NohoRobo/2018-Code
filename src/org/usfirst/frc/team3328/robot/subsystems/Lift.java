@@ -8,19 +8,19 @@ public interface Lift {
 	
 	double getHeight();
 	
-	void liftHigh();
+	void toScaleHigh();
 	
-	void liftMid();
+	void toScaleMid();
 	
-	void liftLow();
+	void toScaleLow();
 	
-	void liftSwitch();
+	void toSwitch();
 	
-	void liftGround();
+	void toGround();
 	
 	void reset();
 
-	void controlledLift(double yAxis);
+	void controlledMove(double yAxis);
 
 	void moveLiftTo(int position);
 	

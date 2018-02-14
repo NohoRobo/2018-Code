@@ -30,9 +30,11 @@ public class PowerUpLift implements Lift {
 
 
 	
-	public PowerUpLift(Encoder encoder, PWMTalonSRX talon, PID pid) {
+	public PowerUpLift(Encoder encoder, PWMTalonSRX talon,
+					   DigitalInput limitswitch, PID pid) {
 		this.encoder = encoder;
 		this.talon = talon;
+		this.limitswitch = limitswitch;
 		this.pid = pid;
 	}
 		
@@ -68,37 +70,37 @@ public class PowerUpLift implements Lift {
 	}
 
 	@Override
-	public void liftHigh() {
+	public void toScaleHigh() {
 		moveLiftTo(SCALE_HIGH_POSITION);
 		autoAdjustHeight(encoder.get(), SCALE_HIGH_POSITION);
 	}
 
 	@Override
-	public void liftMid() {
+	public void toScaleMid() {
 		moveLiftTo(SCALE_MID_POSITION);
 		autoAdjustHeight(encoder.get(), SCALE_MID_POSITION);
 	}
 
 	@Override
-	public void liftLow() {
+	public void toScaleLow() {
 		moveLiftTo(SCALE_LOW_POSITION);
 		autoAdjustHeight(encoder.get(), SCALE_LOW_POSITION);
 	}
 
 	@Override
-	public void liftSwitch() {
+	public void toSwitch() {
 		moveLiftTo(SWITCH_POSITION);
 		autoAdjustHeight(encoder.get(), SWITCH_POSITION);
 	}
 
 	@Override
-	public void liftGround() {
+	public void toGround() {
 		moveLiftTo(EXCHANGE_POSITION);
 		autoAdjustHeight(encoder.get(), EXCHANGE_POSITION);
 	}
 	
 	@Override
-	public void controlledLift(double yAxis) {
+	public void controlledMove(double yAxis) {
 		talon.set(yAxis / restraint); 
 	}
 	
@@ -121,8 +123,8 @@ public class PowerUpLift implements Lift {
 		}
 		if (limitHit()) {
 			stop();
+			reset();
 		}
 		talon.set(liftSpeed);
 	}
-
 }

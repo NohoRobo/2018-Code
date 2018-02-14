@@ -21,4 +21,6 @@ public interface Controller {
 
 	boolean getButtonPress(Buttons but);
 
+	double getVerticalMovement();
+
 }
