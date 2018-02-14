@@ -3,39 +3,69 @@ package org.usfirst.frc.team3328.robot;
 
 import org.usfirst.frc.team3328.robot.subsystems.DriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.Feeder;
+import org.usfirst.frc.team3328.robot.subsystems.Lift;
+import org.usfirst.frc.team3328.robot.subsystems.Sheeder;
 import org.usfirst.frc.team3328.robot.subsystems.Shooter;
 import org.usfirst.frc.team3328.robot.utilities.Controller;
 import org.usfirst.frc.team3328.robot.utilities.SteamWorksXbox.Buttons;
+//import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox.Buttons;
 
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Teleop {
 	
 	DriveSystem drive;
-	Shooter shoot;
-	Feeder feed;
+	Sheeder sheed;
+	Lift lift;
 	Controller utilXbox;
 	Controller driveXbox;
 	
-	public Teleop(DriveSystem drive, Shooter shoot, Feeder feed,
+	
+	public Teleop(DriveSystem drive, Sheeder sheed, Lift lift,
 				  Controller utilXbox, Controller driveXbox){
 		this.drive = drive;
-		this.shoot = shoot;
-		this.feed = feed;
+		this.sheed = sheed;
+		this.lift = lift;
 		this.utilXbox = utilXbox;
 		this.driveXbox = driveXbox;
 	}
 	
 	public void run(){
 		//driving
-		if (driveXbox.getButtonRelease(Buttons.LBUMP)){
-			drive.upRestraint();
-		}
-		if (driveXbox.getButtonRelease(Buttons.RBUMP)){
-			drive.downRestraint();
-		}
+		if (driveXbox.getButtonRelease(Buttons.A))
+			drive.fullSpeed();
+	
+		if (driveXbox.getButtonRelease(Buttons.B))
+			drive.thirdSpeed();
+			
 		drive.controlledMove(driveXbox.getX(), driveXbox.getY());
+
+		//lift
+/*		if (utilXbox.getButtonRelease(Buttons.START)) 
+			lift.toGround();
+		
+		if (utilXbox.getButtonRelease(Buttons.X)) 
+			lift.toSwitch(); 
+		
+		if (utilXbox.getButtonRelease(Buttons.A)) 
+			lift.toScaleLow();
+		
+		if (utilXbox.getButtonRelease(Buttons.B)) 
+			lift.toScaleMid();
+		
+		if (utilXbox.getButtonRelease(Buttons.Y)) 
+			lift.toScaleHigh();
+		
+		lift.controlledMove(utilXbox.getVerticalMovement());
+		
+		//sheeder
+		if (utilXbox.getButtonRelease(Buttons.LBUMP))
+			sheed.controlFeeder();
+*/
+		
+		/*
 		if (driveXbox.getButtonRelease(Buttons.LBUMP)){
 			feed.controlFeeder();
 		}
@@ -46,9 +76,9 @@ public class Teleop {
 			}else{
 				shoot.startShoot();
 			}
-		}
-		shoot.updateShoot();
-		shoot.isMax();
+*///		}
+//		shoot.updateShoot();
+//		shoot.isMax();
 //		if (utilXbox.getButtonRelease(Buttons.X)){
 //			if (shoot.isLoading()){
 //				shoot.stopLoad();
@@ -80,17 +110,13 @@ public class Teleop {
 		return drive;
 	}
 	
-	public Shooter getShooter(){
-		return shoot;
+	public Sheeder getShooter(){
+		return sheed;
 	}
 	
-	public Feeder getFeeder(){
-		return feed;
-	}
-	
-	public Climber getClimber(){
-		return climb;
-	}
+//	public Climber getClimber(){
+//		return climb;
+//	}
 	
 	public Controller getXbox(){
 		return utilXbox;

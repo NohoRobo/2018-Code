@@ -59,5 +59,11 @@ public class SteamWorksJoystick implements Controller {
 		return 0;
 	}
 
+	@Override
+	public double getVerticalMovement() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	
 }

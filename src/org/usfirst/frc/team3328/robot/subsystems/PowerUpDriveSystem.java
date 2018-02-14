@@ -58,7 +58,7 @@ public class PowerUpDriveSystem implements DriveSystem {
 	
 	public double calculateSpeed(double position){
 		//graph this in desmos it works i promise
-		double newPosition = position*position; 
+		double newPosition = position*position*(Math.signum(position)); 
 		return newPosition;
 	}
 	
@@ -71,6 +71,16 @@ public class PowerUpDriveSystem implements DriveSystem {
 	@Override
 	public void printSpeed(){
 		//System.out.printf("%.2f || %.2f\n",talons.getfl(), talons.getfr());
+	}
+	
+	@Override
+	public void fullSpeed() {
+		restraint = .8;
+	}
+	
+	@Override
+	public void thirdSpeed() {
+		restraint = .33;
 	}
 	
 	@Override
@@ -126,6 +136,8 @@ public class PowerUpDriveSystem implements DriveSystem {
 	public void controlledMove(double xAxis, double yAxis){
 		double x = calculateSpeed(xAxis);
 		double y = calculateSpeed(yAxis);
+//		double x = xAxis;
+//		double y = yAxis;
 		move((x + y) / restraint, 
 			(x - y) / restraint);
 	}

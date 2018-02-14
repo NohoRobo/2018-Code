@@ -1,8 +1,7 @@
 package org.usfirst.frc.team3328.robot.subsystems;
 
 import org.usfirst.frc.team3328.robot.utilities.ADIS16448_IMU;
-import org.usfirst.frc.team3328.robot.utilities.DriveTalons;
-import org.usfirst.frc.team3328.robot.utilities.Tracking;
+//import org.usfirst.frc.team3328.robot.utilities.DriveTalons;
 
 public interface DriveSystem {
 	
@@ -33,5 +32,9 @@ public interface DriveSystem {
 	void placeGear();
 
 	void controlledMove(double xAxis, double yAxis);
+
+	void fullSpeed();
+	
+	void thirdSpeed();
 
 }

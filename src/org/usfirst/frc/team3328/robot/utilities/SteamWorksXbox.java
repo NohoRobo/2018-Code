@@ -1,14 +1,18 @@
 package org.usfirst.frc.team3328.robot.utilities;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Joystick;
+
 
 public class SteamWorksXbox implements Controller {
 	
 	XboxController xbox;
+	Joystick stick;
 
 	boolean[] button = new boolean[10];
 	
-	public enum Buttons {A(1), B(2), X(3), Y(4), LBUMP(5), RBUMP(6); 
+	public enum Buttons {A(1), B(2), X(3), Y(4), LBUMP(5), RBUMP(6),
+						 BACK(7), START(8); 
 		public int value;
 		Buttons(int value) {
 			this.value = value;
@@ -40,6 +44,11 @@ public class SteamWorksXbox implements Controller {
 			return xbox.getRawAxis(0);
 		}
 		return 0;
+	}
+	
+	@Override
+	public double getVerticalMovement() {
+		return stick.getY();
 	}
 	
 	@Override
