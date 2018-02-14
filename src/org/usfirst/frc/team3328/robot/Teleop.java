@@ -2,10 +2,8 @@ package org.usfirst.frc.team3328.robot;
 
 
 import org.usfirst.frc.team3328.robot.subsystems.DriveSystem;
-import org.usfirst.frc.team3328.robot.subsystems.Feeder;
 import org.usfirst.frc.team3328.robot.subsystems.Lift;
 import org.usfirst.frc.team3328.robot.subsystems.Sheeder;
-import org.usfirst.frc.team3328.robot.subsystems.Shooter;
 import org.usfirst.frc.team3328.robot.utilities.Controller;
 import org.usfirst.frc.team3328.robot.utilities.SteamWorksXbox.Buttons;
 //import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox.Buttons;
