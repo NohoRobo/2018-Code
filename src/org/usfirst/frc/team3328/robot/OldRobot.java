@@ -16,6 +16,7 @@ import org.usfirst.frc.team3328.robot.utilities.Controller;
 import org.usfirst.frc.team3328.robot.utilities.DriveEncoders;
 import org.usfirst.frc.team3328.robot.utilities.DriveTalons;
 import org.usfirst.frc.team3328.robot.utilities.PID;
+import org.usfirst.frc.team3328.robot.utilities.PID2;
 import org.usfirst.frc.team3328.robot.utilities.SheederSpeedControllers;
 //import org.usfirst.frc.team3328.robot.utilities.REVDigitBoard;
 //import org.usfirst.frc.team3328.robot.utilities.ShooterTalons;
@@ -77,7 +78,7 @@ public class OldRobot extends IterativeRobot {
 					new Encoder(4,5), 
 					new PWMTalonSRX(6),
 					new DigitalInput(8),
-					new PID(0,0,0)),
+					new PID2(0,0,0)),
 				xbox, //util Omar was here
 				new SteamWorksXbox(0)); //drive
 //		auto = new StateMachine(telop, new SendableChooser<Modes>());

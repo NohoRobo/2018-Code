@@ -1,70 +1,136 @@
 package org.usfirst.frc.team3328.robot;
 
 import org.usfirst.frc.team3328.robot.subsystems.NewDriveSystem;
+import org.usfirst.frc.team3328.robot.subsystems.NewSheeder;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
-import org.usfirst.frc.team3328.robot.utilities.DriveTalons;
 import org.usfirst.frc.team3328.robot.utilities.NewController;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox.Buttons;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+//import edu.wpi.first.wpilibj.DoubleSolenoid;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Compressor;
 
 public class ControllerLogic {
 	
 	NewDriveSystem _driveSystem;
-	NewController _controller;
+	NewSheeder _sheeder;
+	NewController _driveCont;
+	NewController _utilCont;
 	PowerUpLift _lift;
 	
-	final double deadzone = 0;
-	double restraint = 1;
+	DigitalInput _limitSwitch;
+	Compressor _compressor;	
 	
-	public ControllerLogic(NewDriveSystem driveSystem, NewController controller) {
+	final double deadzone = .15;
+	double restraint = 2;
+	
+	public ControllerLogic(NewDriveSystem driveSystem, //NewSheeder sheeder,
+						   Compressor compressor, NewController driveCont, NewController utilCont) {
 		this._driveSystem = driveSystem;
-		this._controller = controller;
+//		this._sheeder = sheeder;
+		this._compressor = compressor;
+		this._driveCont = driveCont;
+		this._utilCont = utilCont;
+
 	}
 
 	public void run() {
-		//turn left and right
+		//drive
 		_driveSystem.setMotors(speedOf(
-				_controller.getRightTrigger()-_controller.getLeftTrigger()+
-				(Math.abs(_controller.getX())>0.2?_controller.getX():-0)),speedOf(//left
-				_controller.getRightTrigger()-_controller.getLeftTrigger()-
-				(Math.abs(_controller.getX())>0.2?_controller.getX():0)));//right
-		 /*if(joyStickisMoved()) {
-			 if (_controller.getX() > 0) {
-				 _driveSystem.turnRight(speedOf(_controller.getX()));
-			 } else if (_controller.getX() < 0) {
-				 _driveSystem.turnLeft(speedOf(-_controller.getX()));
+				_driveCont.getRightTrigger()-_driveCont.getLeftTrigger()+
+				(Math.abs(_driveCont.getX())>0.2?_driveCont.getX():-0)),speedOf(//left
+				_driveCont.getRightTrigger()-_driveCont.getLeftTrigger()-
+				(Math.abs(_driveCont.getX())>0.2?_driveCont.getX():0)));//right
+		 
+/*		//turn left and right
+		 if(joyStickisMoved(_driveCont)) {
+			 if (_driveCont.getX() > 0) {
+				 _driveSystem.turnRight(speedOf(_driveCont.getX()));
+			 } else if (_driveCont.getX() < 0) {
+				 _driveSystem.turnLeft(speedOf(-_driveCont.getX()));
 			 } else {
 				 _driveSystem.moveForward(0);
 			 }
 		 }
 		 
 		 //move forward and backward
-		 if(rightTriggerisPressed() || leftTriggerisPressed()) {
-			 if (_controller.getRightTrigger() > _controller.getLeftTrigger()) 
-				 _driveSystem.moveForward(speedOf(_controller.getRightTrigger()));
-			 else if (_controller.getLeftTrigger() > _controller.getRightTrigger())
-				 _driveSystem.moveBackward(speedOf(_controller.getLeftTrigger()));
+		 if(rightTriggerisPressed(_driveCont) || leftTriggerisPressed(_driveCont)) {
+			 if (_driveCont.getRightTrigger() > _driveCont.getLeftTrigger()) 
+				 _driveSystem.moveForward(speedOf(_driveCont.getRightTrigger()));
+			 else if (_driveCont.getLeftTrigger() > _driveCont.getRightTrigger())
+				 _driveSystem.moveBackward(speedOf(_driveCont.getLeftTrigger()));
 			 else 
 				 _driveSystem.moveForward(0);
 		 }
 		 //curveLeftForward
-		 if(rightTriggerisPressed() && (_controller.getX() < -0.2)) {
-			 _driveSystem.curveForwardLeft(speedOf(_controller.getRightTrigger()), speedOf(1 +_controller.getX())); 
-		 }
-			*/
+		 if(rightTriggerisPressed(_driveCont) && (_driveCont.getX() < -0.2)) 
+			 _driveSystem.curveForwardLeft(speedOf(_driveCont.getRightTrigger()),
+			  							   speedOf(_driveCont.getX()), restraint); 
+		 
+		 //curveRightForward
+		 if(rightTriggerisPressed(_driveCont) && (_driveCont.getX() > 0.2)) 
+			 _driveSystem.curveForwardRight(speedOf(_driveCont.getRightTrigger()), 
+			 								speedOf(_driveCont.getX()), restraint); 
+		 
+		 //curveLeftBackward
+		 if(leftTriggerisPressed(_driveCont) && (_driveCont.getX() < -0.2)) 
+			 _driveSystem.curveBackwardLeft(speedOf(_driveCont.getLeftTrigger()), 
+			 								speedOf(_driveCont.getX()), restraint); 
+		 
+		 //curveRightBackward
+		 if(leftTriggerisPressed(_driveCont) && (_driveCont.getX() > 0.2)) 
+			 _driveSystem.curveBackwardRight(speedOf(_driveCont.getLeftTrigger()), 
+			 								speedOf(_driveCont.getX()), restraint);  
+		
 		 //changeSpeedRestraint
-		 if (_controller.getButtonRelease(Buttons.RBUMP)) {
+		 if(_driveCont.getButtonRelease(Buttons.RBUMP)) 
 			 setHighSpeed();
-		 } else if (_controller.getButtonRelease(Buttons.LBUMP)) {
+		 else if(_driveCont.getButtonRelease(Buttons.LBUMP)) 
 			 setLowSpeed();
+		 
+		 //sheeder - feed and shoot
+/*		 if (_utilCont.getRightTrigger() > _utilCont.getLeftTrigger()) {
+			 while(_utilCont.getRightTrigger() > .4) {
+				_sheeder.feed();
+			 	if(_limitSwitch.get())
+			 		_sheeder.stop();
+			 } 
+		 } else if (_utilCont.getRightTrigger() < _utilCont.getLeftTrigger()) {
+			 while(_utilCont.getLeftTrigger() > .4) {
+					_sheeder.shoot();
+				 }
+		 } else 
+			 _sheeder.stop();
+		 
+		 //sheederpiston out and in 
+		 if(_utilCont.getButtonRelease(Buttons.RBUMP)) {
+			if(_sheeder.isExtended()) 
+				_sheeder.holdPiston();
+			else
+				_sheeder.extend();
+		 } else if(_utilCont.getButtonRelease(Buttons.RBUMP)) {
+			if(_sheeder.isExtended())
+				_sheeder.contract();
+			else 
+				_sheeder.holdPiston();
 		 }
 		 
+		 //compressor 
+		_compressor.setClosedLoopControl(true);
+*/			
+		 
+		
+		 	 
 		 
 		 
 		 
-		 SmartDashboard.putNumber("Joystick Value", _controller.getX());
-		 SmartDashboard.putNumber("Right Trigger Value", _controller.getRightTrigger());
-		 SmartDashboard.putNumber("Left Trigger Value", _controller.getLeftTrigger());
+		 
+		 
+		 SmartDashboard.putNumber("Joystick Value", _driveCont.getX());
+		 SmartDashboard.putNumber("Right Trigger Value", _driveCont.getRightTrigger());
+		 SmartDashboard.putNumber("Left Trigger Value", _driveCont.getLeftTrigger());
 		 SmartDashboard.putNumber("Restraint Value", restraint);
 			 
 	}
@@ -73,24 +139,24 @@ public class ControllerLogic {
 		return (speed * speed * Math.signum(speed)) / restraint;
 	}
 	
-	/*private boolean rightTriggerisPressed() {
-		return _controller.getRightTrigger() > deadzone;
+	private boolean rightTriggerisPressed(NewController controller) {
+		return controller.getRightTrigger() > deadzone;
 	}
 	
-	private boolean leftTriggerisPressed() {
-		return _controller.getLeftTrigger() > deadzone;
+	private boolean leftTriggerisPressed(NewController controller) {
+		return controller.getLeftTrigger() > deadzone;
 	}
 
-	private boolean joyStickisMoved() {
-		return _controller.getX() != 0;
-	}*/
+	private boolean joyStickisMoved(NewController controller) {
+		return controller.getX() != 0;
+	}
 	
 	private void setHighSpeed() {
-		restraint = 1;
+		restraint = 2;
 	}
 	
 	private void setLowSpeed() {
-		restraint = 7;
+		restraint = 5;
 	}
 }
 

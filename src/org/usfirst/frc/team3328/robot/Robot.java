@@ -3,6 +3,7 @@ package org.usfirst.frc.team3328.robot;
 //import org.usfirst.frc.team3328.robot.networking.NetworkTablesTargetProvider;
 //import org.usfirst.frc.team3328.robot.subsystems.PowerUpDriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.NewPowerUpDriveSystem;
+import org.usfirst.frc.team3328.robot.subsystems.NewPowerUpSheeder;
 //import org.usfirst.frc.team3328.robot.subsystems.PowerUpFeeder;
 //import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
 //import org.usfirst.frc.team3328.robot.subsystems.PowerUpSheeder;
@@ -26,14 +27,19 @@ import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox;
 //import org.usfirst.frc.team3328.robot.utilities.SteamWorksXbox;
 //import org.usfirst.frc.team3328.robot.utilities.Tracking;
 //import org.usfirst.frc.team3328.robot.utilities.SteamWorksXbox.Buttons;
+import org.usfirst.frc.team3328.robot.utilities.SheederSpeedControllers;
 
 //import com.ctre.CANTalon;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 //import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.PWMVictorSPX;
 //import edu.wpi.first.wpilibj.PWMTalonSRX;
 //import edu.wpi.first.wpilibj.PWMVictorSPX;
 //import edu.wpi.first.wpilibj.Relay;
@@ -72,8 +78,16 @@ public class Robot extends IterativeRobot {
 					    new VictorSP(0),
 					    new VictorSP(3),
 					    new VictorSP(1)),
-				    new ADIS16448_IMU(), pid), 
-				new PowerUpXbox(0));
+				    new ADIS16448_IMU(), pid),
+/*				new NewPowerUpSheeder(
+					new DigitalInput(0), 
+					new SheederSpeedControllers(
+						new PWMVictorSPX(4), 
+						new PWMVictorSPX(5)),
+						new DoubleSolenoid(2, 3)), //ports unknown
+*/				new Compressor(),
+				new PowerUpXbox(0),
+				new PowerUpXbox(1));
 //		auto = new StateMachine(telop, new SendableChooser<Modes>());
 //		auto.setMode();
 //		System.out.println("Mode " + auto.getMode());

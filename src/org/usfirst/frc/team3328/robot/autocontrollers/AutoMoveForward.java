@@ -1,13 +1,12 @@
-package org.usfirst.frc.team3328.robot.subsystems;
+package org.usfirst.frc.team3328.robot.autocontrollers;
 
 import org.usfirst.frc.team3328.robot.utilities.NewController;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox.Buttons;
 
-public class AutoControllerMoveForward implements NewController {
+public class AutoMoveForward implements NewController {
 
 	@Override
 	public double getX() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -28,13 +27,11 @@ public class AutoControllerMoveForward implements NewController {
 
 	@Override
 	public boolean getButtonRelease(Buttons but) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean getButtonPress(Buttons but) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }
