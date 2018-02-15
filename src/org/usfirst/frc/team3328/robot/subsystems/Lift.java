@@ -21,8 +21,5 @@ public interface Lift {
 	void reset();
 
 	void controlledMove(double yAxis);
-
-	void moveLiftTo(int position);
-	
 	
 }

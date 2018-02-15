@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3328.robot;
 
 import org.usfirst.frc.team3328.robot.subsystems.NewDriveSystem;
+import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
 import org.usfirst.frc.team3328.robot.utilities.DriveTalons;
 import org.usfirst.frc.team3328.robot.utilities.NewController;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox.Buttons;
@@ -10,9 +11,10 @@ public class ControllerLogic {
 	
 	NewDriveSystem _driveSystem;
 	NewController _controller;
+	PowerUpLift _lift;
 	
 	final double deadzone = 0;
-	double restraint = 3;
+	double restraint = 1;
 	
 	public ControllerLogic(NewDriveSystem driveSystem, NewController controller) {
 		this._driveSystem = driveSystem;
@@ -21,7 +23,12 @@ public class ControllerLogic {
 
 	public void run() {
 		//turn left and right
-		 if(joyStickisMoved()) {
+		_driveSystem.setMotors(speedOf(
+				_controller.getRightTrigger()-_controller.getLeftTrigger()+
+				(Math.abs(_controller.getX())>0.2?_controller.getX():-0)),speedOf(//left
+				_controller.getRightTrigger()-_controller.getLeftTrigger()-
+				(Math.abs(_controller.getX())>0.2?_controller.getX():0)));//right
+		 /*if(joyStickisMoved()) {
 			 if (_controller.getX() > 0) {
 				 _driveSystem.turnRight(speedOf(_controller.getX()));
 			 } else if (_controller.getX() < 0) {
@@ -40,18 +47,18 @@ public class ControllerLogic {
 			 else 
 				 _driveSystem.moveForward(0);
 		 }
-
-		 //changeSpeedRestraint
-		 if (_controller.getButtonRelease(Buttons.B)) {
-			 setHighSpeed();
-		 } else if (_controller.getButtonRelease(Buttons.A)) {
-			 setLowSpeed();
-		 }
-		 
 		 //curveLeftForward
 		 if(rightTriggerisPressed() && (_controller.getX() < -0.2)) {
 			 _driveSystem.curveForwardLeft(speedOf(_controller.getRightTrigger()), speedOf(1 +_controller.getX())); 
 		 }
+			*/
+		 //changeSpeedRestraint
+		 if (_controller.getButtonRelease(Buttons.RBUMP)) {
+			 setHighSpeed();
+		 } else if (_controller.getButtonRelease(Buttons.LBUMP)) {
+			 setLowSpeed();
+		 }
+		 
 		 
 		 
 		 
@@ -66,7 +73,7 @@ public class ControllerLogic {
 		return (speed * speed * Math.signum(speed)) / restraint;
 	}
 	
-	private boolean rightTriggerisPressed() {
+	/*private boolean rightTriggerisPressed() {
 		return _controller.getRightTrigger() > deadzone;
 	}
 	
@@ -76,10 +83,10 @@ public class ControllerLogic {
 
 	private boolean joyStickisMoved() {
 		return _controller.getX() != 0;
-	}
+	}*/
 	
 	private void setHighSpeed() {
-		restraint = 3;
+		restraint = 1;
 	}
 	
 	private void setLowSpeed() {

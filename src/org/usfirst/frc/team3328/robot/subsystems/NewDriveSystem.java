@@ -19,4 +19,6 @@ public interface NewDriveSystem {
 	void curveBackwardRight(double speed, double radius);
 	
 	void stop();
+
+	void setMotors(double left, double right);
 }

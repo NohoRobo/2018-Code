@@ -4,8 +4,7 @@ import org.usfirst.frc.team3328.robot.utilities.ADIS16448_IMU;
 //import org.usfirst.frc.team3328.robot.utilities.DriveTalons;
 
 public interface DriveSystem {
-	
-	boolean getPlacingGear();
+
 	
 	ADIS16448_IMU getImu();
 		
@@ -26,10 +25,6 @@ public interface DriveSystem {
 	void downRestraint();
 	
 	void move(double left, double right);
-	
-	void setGearDistance(double gearDistance);
-
-	void placeGear();
 
 	void controlledMove(double xAxis, double yAxis);
 

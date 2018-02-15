@@ -110,27 +110,7 @@ public class PowerUpDriveSystem implements DriveSystem {
 		move(angleSpeed, -angleSpeed);
 	}
 
-	@Override
-	public void setGearDistance(double gearDistance) {
-		this.gearDistance = gearDistance;
-	}
 	
-	@Override
-	public void placeGear(){
-		placingGear = true;
-		if(encoders.getDistance() < gearDistance){
-			move(gearSpeed, gearSpeed);
-		}else{
-			placingGear = false;
-			stop();
-		}
-	}
-	
-	@Override
-	public boolean getPlacingGear(){
-		return placingGear;
-	}
-
 	
 	@Override
 	public void controlledMove(double xAxis, double yAxis){

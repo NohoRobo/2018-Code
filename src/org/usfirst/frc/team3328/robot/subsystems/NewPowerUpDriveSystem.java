@@ -22,6 +22,12 @@ public class NewPowerUpDriveSystem implements NewDriveSystem {
 	}
 	
 	@Override
+	public void setMotors(double left, double right) {
+		talons.right(right);
+		talons.left(left);
+	}
+	
+	@Override
 	public void moveForward(double speed) {
 		talons.right(speed);
 		talons.left(speed);

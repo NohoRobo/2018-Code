@@ -1,6 +1,6 @@
 package org.usfirst.frc.team3328.robot.subsystems;
 
-import org.usfirst.frc.team3328.robot.utilities.PID;
+import org.usfirst.frc.team3328.robot.utilities.PID2;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -9,13 +9,13 @@ public class PowerUpLift implements Lift {
 
 	Encoder encoder; 
 	PWMTalonSRX talon;
-	PID pid;
+	PID2 pid;
 	DigitalInput limitswitch;
 	
 	public double restraint = 1;
 	public double targetPosition = 0;
 	public double liftSpeed = 0; 
-	public double errorDistance;
+	public double desiredHeight;
 	public double angleSpeed = 1; //idk what value yet
 	
 	
@@ -31,7 +31,7 @@ public class PowerUpLift implements Lift {
 
 	
 	public PowerUpLift(Encoder encoder, PWMTalonSRX talon,
-					   DigitalInput limitswitch, PID pid) {
+					   DigitalInput limitswitch, PID2 pid) {
 		this.encoder = encoder;
 		this.talon = talon;
 		this.limitswitch = limitswitch;
@@ -58,50 +58,41 @@ public class PowerUpLift implements Lift {
 		return encoder.getDistance();
 	}
 	
-	public void updateAngleSpeed(){
-		pid.setError(errorDistance / 360);
-		angleSpeed = pid.getCorrection();
-	}
-	
-	public void autoAdjustHeight(double current, double target){
-		errorDistance = target - current;
-		updateAngleSpeed();
+	public void autoAdjustHeight(double target){
+		desiredHeight = target;
+		pid.setDesiredValue(target);
+		pid.setSensorValue(encoder.get());
 		talon.set(angleSpeed);
 	}
 
 	@Override
 	public void toScaleHigh() {
-		moveLiftTo(SCALE_HIGH_POSITION);
-		autoAdjustHeight(encoder.get(), SCALE_HIGH_POSITION);
+		autoAdjustHeight(SCALE_HIGH_POSITION);
 	}
 
 	@Override
 	public void toScaleMid() {
-		moveLiftTo(SCALE_MID_POSITION);
-		autoAdjustHeight(encoder.get(), SCALE_MID_POSITION);
+		autoAdjustHeight(SCALE_MID_POSITION);
 	}
 
 	@Override
 	public void toScaleLow() {
-		moveLiftTo(SCALE_LOW_POSITION);
-		autoAdjustHeight(encoder.get(), SCALE_LOW_POSITION);
+		autoAdjustHeight(SCALE_LOW_POSITION);
 	}
 
 	@Override
 	public void toSwitch() {
-		moveLiftTo(SWITCH_POSITION);
-		autoAdjustHeight(encoder.get(), SWITCH_POSITION);
+		autoAdjustHeight(SWITCH_POSITION);
 	}
 
 	@Override
 	public void toGround() {
-		moveLiftTo(EXCHANGE_POSITION);
-		autoAdjustHeight(encoder.get(), EXCHANGE_POSITION);
+		autoAdjustHeight(EXCHANGE_POSITION);
 	}
 	
 	@Override
-	public void controlledMove(double yAxis) {
-		talon.set(yAxis / restraint); 
+	public void controlledMove(double power) {
+		talon.set(power / restraint); 
 	}
 	
 	public boolean limitHit() {
@@ -112,7 +103,11 @@ public class PowerUpLift implements Lift {
 		}
 	}
 	
-	@Override
+	public double getMotorPower() {
+		return pid.getMotorValue();
+	}
+	
+	/*@Override
 	public void moveLiftTo(int position) {
 		if (encoder.get() < position) {
 			liftSpeed = SPEED_UP_LIFT;
@@ -126,5 +121,5 @@ public class PowerUpLift implements Lift {
 			reset();
 		}
 		talon.set(liftSpeed);
-	}
+	}*/
 }

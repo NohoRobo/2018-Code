@@ -87,8 +87,8 @@ public class DrivePID {
 		this.desiredDistance = desiredDistance;
 	}
 	
-	public void setDesiredAngle(double desiredDistance) {
-		this.desiredDistance = desiredDistance;
+	public void setDesiredAngle(double desiredAngle) {
+		this.desiredAngle = desiredAngle;
 	}
 		
 	public double [] getDriveValues(){
