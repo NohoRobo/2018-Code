@@ -19,6 +19,7 @@ public class ControllerLogic {
 	public ControllerLogic(NewDriveSystem driveSystem, NewController controller) {
 		this._driveSystem = driveSystem;
 		this._controller = controller;
+		this._lift = lift;
 	}
 
 	public void run() {

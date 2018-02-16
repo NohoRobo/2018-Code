@@ -3,6 +3,7 @@ package org.usfirst.frc.team3328.robot;
 //import org.usfirst.frc.team3328.robot.networking.NetworkTablesTargetProvider;
 //import org.usfirst.frc.team3328.robot.subsystems.PowerUpDriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.NewPowerUpDriveSystem;
+import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
 //import org.usfirst.frc.team3328.robot.subsystems.PowerUpFeeder;
 //import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
 //import org.usfirst.frc.team3328.robot.subsystems.PowerUpSheeder;
@@ -73,7 +74,10 @@ public class Robot extends IterativeRobot {
 					    new VictorSP(3),
 					    new VictorSP(1)),
 				    new ADIS16448_IMU(), pid), 
-				new PowerUpXbox(0));
+				new PowerUpXbox(0),
+				new PowerUpLift(
+						new Encoder(0,1),
+						new ));
 //		auto = new StateMachine(telop, new SendableChooser<Modes>());
 //		auto.setMode();
 //		System.out.println("Mode " + auto.getMode());
