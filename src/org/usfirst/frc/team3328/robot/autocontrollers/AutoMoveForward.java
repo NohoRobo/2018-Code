@@ -1,10 +1,13 @@
 package org.usfirst.frc.team3328.robot.autocontrollers;
 
+import org.usfirst.frc.team3328.robot.utilities.DrivePID;
 import org.usfirst.frc.team3328.robot.utilities.NewController;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox.Buttons;
 
 public class AutoMoveForward implements NewController {
 
+	DrivePID pid;
+	
 	@Override
 	public double getX() {
 		return 0;

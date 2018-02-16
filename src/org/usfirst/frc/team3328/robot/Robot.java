@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3328.robot;
 
+import org.usfirst.frc.team3328.robot.autocontrollers.AutoMoveForward;
 //import org.usfirst.frc.team3328.robot.networking.NetworkTablesTargetProvider;
 //import org.usfirst.frc.team3328.robot.subsystems.PowerUpDriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.NewPowerUpDriveSystem;
@@ -54,6 +55,8 @@ import edu.wpi.first.wpilibj.VictorSP;
 
 public class Robot extends IterativeRobot {
 	ControllerLogic logic;
+	ControllerLogic auto;
+	NewPowerUpDriveSystem driveSystem;
 	CameraServer stream;
 	UsbCamera usbCam;
 	Teleop telop;
@@ -68,17 +71,18 @@ public class Robot extends IterativeRobot {
 //		usbCam = stream.startAutomaticCapture();
 //		xbox = new SteamWorksXbox(1);
 		pid = new PID(8 ,0, 1);
+		driveSystem = new NewPowerUpDriveSystem(
+				new DriveEncoders(
+			    new Encoder(0,1),
+			    new Encoder(2,3)),
+		    new DriveTalons(
+			    new VictorSP(2),
+			    new VictorSP(0),
+			    new VictorSP(3),
+			    new VictorSP(1)),
+		    new ADIS16448_IMU(), pid);
 		logic = new ControllerLogic(
-				new NewPowerUpDriveSystem(
-				    new DriveEncoders(
-					    new Encoder(0,1),
-					    new Encoder(2,3)),
-				    new DriveTalons(
-					    new VictorSP(2),
-					    new VictorSP(0),
-					    new VictorSP(3),
-					    new VictorSP(1)),
-				    new ADIS16448_IMU(), pid),
+					driveSystem,
 /*				new NewPowerUpSheeder(
 					new DigitalInput(0), 
 					new SheederSpeedControllers(
@@ -88,6 +92,13 @@ public class Robot extends IterativeRobot {
 */				new Compressor(),
 				new PowerUpXbox(0),
 				new PowerUpXbox(1));
+		
+		auto = new ControllerLogic(
+					driveSystem, 
+					new Compressor(),
+					new AutoMoveForward(),
+					new AutoMoveForward());
+					
 //		auto = new StateMachine(telop, new SendableChooser<Modes>());
 //		auto.setMode();
 //		System.out.println("Mode " + auto.getMode());
@@ -101,7 +112,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-//		auto.run();
+		auto.run();
 	}
 
 	@Override

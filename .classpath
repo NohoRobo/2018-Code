@@ -14,5 +14,57 @@
 	<classpathentry kind="lib" path="C:/Users/Tom/Downloads/EclipsePluginsV2018.2.2/eclipse/plugins/edu.wpi.first.wpilib.plugins.java_2018.2.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Tom/Downloads/EclipsePluginsV2018.2.2/eclipse/plugins/edu.wpi.first.wpilib.plugins.riolog_2018.2.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Tom/Downloads/log4j-1.2.17/apache-log4j-1.2.17/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-1.2-api-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-1.2-api-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-1.2-api-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-api-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-api-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-api-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-appserver-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-appserver-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-appserver-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-cassandra-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-cassandra-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-cassandra-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-core-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-core-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-core-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-core-2.10.0-tests.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-couchdb-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-couchdb-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-couchdb-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-flume-ng-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-flume-ng-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-flume-ng-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-iostreams-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-iostreams-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-iostreams-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-jcl-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-jcl-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-jcl-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-jmx-gui-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-jmx-gui-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-jmx-gui-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-jul-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-jul-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-jul-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-liquibase-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-liquibase-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-liquibase-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-mongodb-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-mongodb-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-mongodb-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-slf4j-impl-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-slf4j-impl-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-slf4j-impl-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-taglib-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-taglib-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-taglib-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-to-slf4j-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-to-slf4j-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-to-slf4j-2.10.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-web-2.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-web-2.10.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-web-2.10.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
