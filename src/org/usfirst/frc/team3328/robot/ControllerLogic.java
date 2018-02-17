@@ -4,8 +4,15 @@ import org.usfirst.frc.team3328.robot.subsystems.Lift;
 import org.usfirst.frc.team3328.robot.subsystems.NewDriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.NewSheeder;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
+import org.usfirst.frc.team3328.robot.utilities.LogLevel;
+import org.usfirst.frc.team3328.robot.utilities.Logger;
 import org.usfirst.frc.team3328.robot.utilities.NewController;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox.Buttons;
+
+//import org.apache.log4j.Logger;
+//import java.util.logging.Logger;
+
+
 
 import edu.wpi.first.wpilibj.DigitalInput;
 //import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -25,6 +32,8 @@ public class ControllerLogic {
 	DigitalInput _limitSwitch;
 	Compressor _compressor;	
 	
+//	Logger logger = new Logger();
+	
 	final double deadzone = .15;
 	double restraint = 2;
 	
@@ -41,13 +50,13 @@ public class ControllerLogic {
 
 	public void run() {
 		//drive
-		_driveSystem.setMotors(speedOf(
+/*		_driveSystem.setMotors(speedOf(
 				_driveCont.getRightTrigger()-_driveCont.getLeftTrigger()+
 				(Math.abs(_driveCont.getX())>0.2?_driveCont.getX():-0)),speedOf(//left
 				_driveCont.getRightTrigger()-_driveCont.getLeftTrigger()-
 				(Math.abs(_driveCont.getX())>0.2?_driveCont.getX():0)));//right
 		 
-/*		//turn left and right
+*/		//turn left and right
 		 if(joyStickisMoved(_driveCont)) {
 			 if (_driveCont.getX() > 0) {
 				 _driveSystem.turnRight(speedOf(_driveCont.getX()));
@@ -139,6 +148,9 @@ public class ControllerLogic {
 		 SmartDashboard.putNumber("Right Trigger Value", _driveCont.getRightTrigger());
 		 SmartDashboard.putNumber("Left Trigger Value", _driveCont.getLeftTrigger());
 		 SmartDashboard.putNumber("Restraint Value", restraint);
+		 
+		 
+		 Logger.log("hello", LogLevel.debug);
 			 
 	}
 	
