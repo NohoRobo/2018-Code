@@ -1,6 +1,6 @@
 package org.usfirst.frc.team3328.robot.subsystems;
 
-import org.usfirst.frc.team3328.robot.utilities.Pneumatics;
+//import org.usfirst.frc.team3328.robot.utilities.Pneumatics;
 import org.usfirst.frc.team3328.robot.utilities.SheederSpeedControllers;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -10,6 +10,7 @@ public class PowerUpSheeder implements Sheeder {
 	SheederSpeedControllers feeder;
 	SheederSpeedControllers shooter;
 	DigitalInput limitswitch;
+//	Pneumatics piston;
 	boolean limitHit = false;
 	private double speed = 1; //subject to change
 	

@@ -1,20 +1,24 @@
 package org.usfirst.frc.team3328.robot.utilities;
 
-public class PID2{
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PWMVictorSPX;
+
+public class LiftPID extends Thread{
 	//desired values
-	double desiredValue;
-	
-	
-	double KP;
-	double KI;
-	double KD;
+	public volatile double desiredValue;
+	Encoder encoder = new Encoder(0,1);//change port\
+	DigitalInput limitSwitch = new DigitalInput(1);//change port
+	PWMVictorSPX victor = new PWMVictorSPX(1);
+	double KP = 0.1;
+	double KI = 0.0;
+	double KD = 0.0;
 		
 	//intermediate values for PID
 	double proportional;
 	double integral;
 	double derivative;
 	
-	//integral sum variable
 	double integralSum = 0;
 	
 	//error variables
@@ -28,47 +32,28 @@ public class PID2{
 	//{left drive value, right drive value}
 	double motorValue;
 	
-	public PID2(double P, double I, double D){
-		KP = P;
-		KI = I;
-		KD = D;
+	public LiftPID(double KP, double KI, double KD, Encoder encoder, DigitalInput limitSwitch, PWMVictorSPX victor) {
+		this.KP = KP;
+		this.KI = KI;
+		this.KD = KD;
+		this.encoder = encoder;
+		this.limitSwitch = limitSwitch;
+		this.victor = victor;
 	}
 	
-	public void setP(double newP){
-		KP = newP;
-	}
-	
-	public void setI(double newI){
-		KI = newI;
-	}
-	
-	public void setD(double newD){
-		KD = newD;
-	}
-	
-	public double getP(){
-		return KP;
-	}
-	
-	public double getI(){
-		return KI;
-	}
-	
-	public double getD(){
-		return KD;
-	}
-	
-	public double setSensorValue(double sensorValue) {
-		error = desiredValue-sensorValue;
-		return error;
-	}
-	
-	public void setDesiredValue(double desiredValue) {
-		this.desiredValue = desiredValue;
+	public void run() {
+		while(true) {
+			victor.set(getMotorValue());
+			
+		}
 	}
 	
 	public double getMotorValue(){
-		//calculate chang in time since last call of this function
+		//calculate change in time since last call of this function
+		if(limitSwitch.get()) {
+			encoder.reset();
+		}
+		error = desiredValue - encoder.get();
 		long now = System.nanoTime();
 		timeChange = (double)(now - lastTime);
 		timeChange /= 1000000000;

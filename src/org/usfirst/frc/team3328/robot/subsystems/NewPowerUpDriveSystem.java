@@ -55,27 +55,29 @@ public class NewPowerUpDriveSystem implements NewDriveSystem {
 	}
 
 	@Override
-	public void curveForwardLeft(double speed, double radius) {
+	public void curveForwardLeft(double speed, double radius, double restraint) {
 		talons.right(speed);
-		talons.left(radius);
+		talons.left(1/restraint + radius);
 	}
 
 	@Override
-	public void curveForwardRight(double speed, double radius) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void curveBackwardLeft(double speed, double radius) {
-		// TODO Auto-generated method stub
+	public void curveForwardRight(double speed, double radius, double restraint) {
+		talons.left(speed);
+		talons.right(1/restraint - radius);
 
 	}
 
 	@Override
-	public void curveBackwardRight(double speed, double radius) {
-		// TODO Auto-generated method stub
+	public void curveBackwardLeft(double speed, double radius, double restraint) {
+		talons.right(-speed);
+		talons.left(-1/restraint - radius);
 
+	}
+
+	@Override
+	public void curveBackwardRight(double speed, double radius, double restraint) {
+		talons.left(-speed);
+		talons.right(-1/restraint + radius);
 	}
 
 	@Override

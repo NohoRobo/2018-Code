@@ -1,6 +1,6 @@
 package org.usfirst.frc.team3328.robot.subsystems;
 
-import org.usfirst.frc.team3328.robot.utilities.PID2;
+import org.usfirst.frc.team3328.robot.utilities.LiftPID;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -9,8 +9,8 @@ public class PowerUpLift implements Lift {
 
 	Encoder encoder; 
 	PWMTalonSRX talon;
-	PID2 pid;
 	DigitalInput limitswitch;
+	LiftPID pid;
 	
 	public double restraint = 1;
 	public double targetPosition = 0;
@@ -25,17 +25,12 @@ public class PowerUpLift implements Lift {
 	private static final int SWITCH_POSITION = 1;
 	private static final int EXCHANGE_POSITION = 0;
 	
-	private static final double SPEED_UP_LIFT = 0.5;
-	private static final double SPEED_DOWN_LIFT = 0.5;
 
 
 	
-	public PowerUpLift(Encoder encoder, PWMTalonSRX talon,
-					   DigitalInput limitswitch, PID2 pid) {
-		this.encoder = encoder;
-		this.talon = talon;
-		this.limitswitch = limitswitch;
+	public PowerUpLift(LiftPID pid) {
 		this.pid = pid;
+		pid.start();
 	}
 		
 	@Override
@@ -45,7 +40,7 @@ public class PowerUpLift implements Lift {
 
 	@Override
 	public void reset() {
-		encoder.reset();
+		pid.desiredValue = encoder.get();
 	}
 
 	@Override
@@ -60,9 +55,7 @@ public class PowerUpLift implements Lift {
 	
 	public void autoAdjustHeight(double target){
 		desiredHeight = target;
-		pid.setDesiredValue(target);
-		pid.setSensorValue(encoder.get());
-		talon.set(angleSpeed);
+		pid.desiredValue = target;
 	}
 
 	@Override
@@ -102,24 +95,4 @@ public class PowerUpLift implements Lift {
 			return false;
 		}
 	}
-	
-	public double getMotorPower() {
-		return pid.getMotorValue();
-	}
-	
-	/*@Override
-	public void moveLiftTo(int position) {
-		if (encoder.get() < position) {
-			liftSpeed = SPEED_UP_LIFT;
-		} else if (encoder.get() > position) {
-			liftSpeed = -SPEED_DOWN_LIFT;
-		} else {
-			liftSpeed = 0;
-		}
-		if (limitHit()) {
-			stop();
-			reset();
-		}
-		talon.set(liftSpeed);
-	}*/
 }
