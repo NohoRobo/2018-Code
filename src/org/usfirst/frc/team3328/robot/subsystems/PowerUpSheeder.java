@@ -37,6 +37,8 @@ public class PowerUpSheeder implements Sheeder {
 		ls.set(0); 
 		rs.set(0);
 	}
+	
+	
 
 	@Override
 	public void extend() {

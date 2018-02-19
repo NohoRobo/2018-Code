@@ -43,6 +43,8 @@ public class Robot extends IterativeRobot {
 
 	PIDController leftPID;
 	PIDController rightPID;
+	
+	Timer _sheedTimer;
 
 	boolean firstTimeRunning = true;
 
@@ -52,6 +54,8 @@ public class Robot extends IterativeRobot {
 		//		usbCam = stream.startAutomaticCapture();
 		rightEncoder = new Encoder(2,3);
 		leftEncoder = new Encoder(0,1, true);
+		
+		_sheedTimer = new Timer();
 
 		left = new VictorSP(0);
 		right = new VictorSP(1);
@@ -78,7 +82,8 @@ public class Robot extends IterativeRobot {
 		logic = new ControllerLogic(
 				driveSystem,
 				sheeder, 
-				lift,
+				lift, 
+				new Timer(),
 				new PowerUpXbox(0),
 				new PowerUpXbox(1));
 
@@ -86,6 +91,8 @@ public class Robot extends IterativeRobot {
 				leftEncoder, rightEncoder, firstTimeRunning);
 
 		lift.init();
+		
+		
 	}
 
 	@Override

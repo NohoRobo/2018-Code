@@ -43,10 +43,11 @@ public class ControllerLogic {
 	double restraint = 1;
 
 	public ControllerLogic(DriveSystem driveSystem, Sheeder sheeder, //Lift lifter, Compressor compressor,
-			Lift lifter, NewController driveCont, NewController utilCont) {
+			Lift lifter, Timer sheederTimer, NewController driveCont, NewController utilCont) {
 		this._driveSystem = driveSystem;
 		this._lifter = lifter;
 		this._sheeder = sheeder;
+		this._sheederTimer = sheederTimer;
 //		this._compressor = compressor;
 		this._driveCont = driveCont;
 		this._utilCont = utilCont;
@@ -103,26 +104,34 @@ public class ControllerLogic {
 		//changeSpeedRestraint
 		if(_driveCont.getButtonRelease(Buttons.RBUMP)) 
 			setHighSpeed();
-		else if(_driveCont.getButtonRelease(Buttons.LBUMP)) 
+		else if(_driveCont.getButtonRelease(Buttons.LBUMP)) { 
 			setLowSpeed();
-
+	}
+		
 		//sheeder - feed and shoot
 		if (_utilCont.getButtonRelease(Buttons.BACK)) {
+			_sheederTimer.reset();
 			_sheederTimer.start();
-			if(_sheederTimer.get() < 0.1) 
-				_sheeder.feed(); 
-			else if(_sheederTimer.get() > 0.1 && _sheederTimer.get() < 0.2 )
-				_sheeder.shoot();
-			else 
-				_sheeder.stop();
+		}
+		if(_sheederTimer.get() >= 0.3) { 
+			_sheeder.stop();
 			_sheederTimer.stop();
 			_sheederTimer.reset();
-		} else if (_utilCont.getRightTrigger() < _utilCont.getLeftTrigger() && (_utilCont.getLeftTrigger() > .2))
+		} else if(_sheederTimer.get() >= 0.1) {
+			_sheeder.stop();
+			_sheeder.shoot();
+		} else if(_sheederTimer.get() >= 0.01) {
+			_sheeder.stop();
+			_sheeder.feed();
+		}
+		
+		if (_utilCont.getRightTrigger() < _utilCont.getLeftTrigger() && (_utilCont.getLeftTrigger() > .2))
 			_sheeder.shoot();
 		else if (_utilCont.getRightTrigger() > _utilCont.getLeftTrigger() && ( _utilCont.getRightTrigger() > .2))
 			_sheeder.feed();
 		else 
-			_sheeder.stop();
+			if(_sheederTimer.get()==0)
+				_sheeder.stop();
 		
 
 /*		//sheederpiston out and in 
@@ -132,7 +141,7 @@ public class ControllerLogic {
 			else
 				_sheeder.extend();
 		 } else if(_utilCont.getButtonRelease(Buttons.RBUMP)) {
-			if(_sheeder.isExtended())
+			if(_sheeder.isExtended() && _lifter.getEncoderValue < 100)
 				_sheeder.contract();
 			else 
 				_sheeder.holdPiston();
@@ -157,17 +166,17 @@ public class ControllerLogic {
 				_lifter.controlledMove(_utilCont.getY());
 		} else if(_utilCont.getButtonPress(Buttons.X)) {
 			_lifter.toSwitch(); 
-		} if(_utilCont.getButtonPress(Buttons.A)) {
+		} else if(_utilCont.getButtonPress(Buttons.A)) {
 			_lifter.toScaleLow();
-		} if(_utilCont.getButtonPress(Buttons.B)) {
+		} else if(_utilCont.getButtonPress(Buttons.B)) {
 			_lifter.toScaleMid();
-		} if(_utilCont.getButtonPress(Buttons.Y)) { 
+		} else if(_utilCont.getButtonPress(Buttons.Y)) { 
 			_lifter.toScaleHigh();
-		} if(_utilCont.getButtonPress(Buttons.START)) {
+		} else if(_utilCont.getButtonPress(Buttons.START)) {
 			_lifter.toGround();
 		}
 
-
+		SmartDashboard.putNumber("choo choo timer", _sheederTimer.get());
 		SmartDashboard.putNumber("X Joystick Value", _driveCont.getX());
 		SmartDashboard.putNumber("Y Joystick Value", _driveCont.getY());
 		SmartDashboard.putNumber("Right Trigger Value", _driveCont.getRightTrigger());

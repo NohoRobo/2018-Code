@@ -61,7 +61,7 @@ public class Auton {
 			}
 			break;
 		case 2:
-			if(_autonDelayTimer.get() > 5) {
+			if(_autonDelayTimer.get() > 5) {	
 				_autonDelayTimer.stop();
 				_autonSelected = 3;
 				_leftPID.setPID(-0.04 ,0, 0);
