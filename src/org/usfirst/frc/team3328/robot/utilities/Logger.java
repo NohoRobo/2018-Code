@@ -5,9 +5,8 @@ public class Logger {
 	public Logger() {
 	}
 
-	public static void log(String string, int logLevel) {
-		System.out.println(string);
+	public static void log(String string, double number, int logLevel) {
+		System.out.println(string + number);
 	}
 	
 }
-

@@ -1,78 +1,61 @@
 package org.usfirst.frc.team3328.robot.subsystems;
 
-//import org.usfirst.frc.team3328.robot.utilities.Pneumatics;
-import org.usfirst.frc.team3328.robot.utilities.SheederSpeedControllers;
-
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PWMVictorSPX;
 
 public class PowerUpSheeder implements Sheeder {
 	
-	SheederSpeedControllers feeder;
-	SheederSpeedControllers shooter;
-	DigitalInput limitswitch;
-//	Pneumatics piston;
-	boolean limitHit = false;
-	private double speed = 1; //subject to change
+	PWMVictorSPX ls;
+	PWMVictorSPX rs;
+	DigitalInput _limitswitch;
+	DoubleSolenoid _piston;
+	private double speed = .3; //subject to change and must be less than 1
 	
-	public PowerUpSheeder (DigitalInput limitswitch, SheederSpeedControllers feeder) {
-		this.limitswitch = limitswitch;	
-		this.feeder = feeder;
-		feeder = shooter;
-	}
-	
-	public void feeder(double speed) {
-		feeder.setSheeder(speed); 
+	public PowerUpSheeder (/*DigitalInput limitswitch,*/ PWMVictorSPX leftSheeder, PWMVictorSPX rightSheeder
+							  /*,DoubleSolenoid piston*/) {
+//		this._limitswitch = limitswitch;	
+		this.ls = leftSheeder;
+		this.rs = rightSheeder;
+//		this._piston = piston;
 	}
 	
 	@Override
-	public boolean isFeeding() {
-		return feeder.getRight() < 0;//change right and sign depending on which direction
-	}
-	@Override
-	public void controlFeeder() {
-		feeder.setSheeder(feeder.getRight() == 0 ? 1 : 0); //get is going to depend on which is + and -
+	public void feed() {
+		ls.set(speed); 
+		rs.set(-speed);
 	}
 	
 	@Override
-	public boolean limitHit() {
-		if (limitswitch.get()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
-	public boolean isShooting() {
-		return shooter.getRight() > 0; //idk which is positive
+	public void shoot() {
+		ls.set(-speed); 
+		rs.set(speed);
 	}
 
 	@Override
-	public void startShoot() {
-		shooter.setSheeder(speed);
+	public void stop() {
+		ls.set(0); 
+		rs.set(0);
 	}
 
 	@Override
-	public void stopShoot() {
-		shooter.stop();
-	}
-
-	@Override
-	public boolean isExpanded() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void expand() {
-		// TODO Auto-generated method stub
-		
+	public void extend() {
+		_piston.set(DoubleSolenoid.Value.kForward);		
 	}
 
 	@Override
 	public void contract() {
-		// TODO Auto-generated method stub
+		_piston.set(DoubleSolenoid.Value.kReverse);		
 		
 	}
-
+	
+	@Override
+	public void holdPiston() {
+		_piston.set(DoubleSolenoid.Value.kOff);	
+	}
+	
+	@Override
+	public boolean isExtended() {
+		return _piston.equals(DoubleSolenoid.Value.kForward);
+	}
 }

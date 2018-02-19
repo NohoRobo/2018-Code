@@ -1,12 +1,22 @@
 package org.usfirst.frc.team3328.robot.autocontrollers;
 
+import org.usfirst.frc.team3328.robot.utilities.DriveEncoders;
 import org.usfirst.frc.team3328.robot.utilities.DrivePID;
 import org.usfirst.frc.team3328.robot.utilities.NewController;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox.Buttons;
 
-public class AutoMoveForward implements NewController {
+
+public class AutoForward implements NewController {
 
 	DrivePID pid;
+	DriveEncoders encoder;
+	
+	double desired;
+	double current = encoder.getDistance();
+	
+	public AutoForward(double desired) {
+		this.desired = desired;
+	}
 	
 	@Override
 	public double getX() {
@@ -20,7 +30,10 @@ public class AutoMoveForward implements NewController {
 
 	@Override
 	public double getRightTrigger() {
-		return 1;
+		while(current < desired) {
+			return 0.3;
+		} 
+		return 0;
 	}
 
 	@Override

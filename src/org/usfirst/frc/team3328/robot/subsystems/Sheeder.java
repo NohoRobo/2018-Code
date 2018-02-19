@@ -2,22 +2,18 @@ package org.usfirst.frc.team3328.robot.subsystems;
 
 public interface Sheeder {
 	
-	boolean isFeeding();
+	void shoot();
 	
-	void controlFeeder();
+	void feed();
 	
-	boolean limitHit();
+	void stop();
+		
+	void extend();
 	
-	boolean isShooting();
-	
-	void startShoot();
-	
-	void stopShoot();
-	
-	boolean isExpanded();
-	
-	void expand();
-
 	void contract();
+
+	void holdPiston();
+
+	boolean isExtended();
 
 }

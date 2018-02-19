@@ -1,35 +1,24 @@
 package org.usfirst.frc.team3328.robot.subsystems;
 
-import org.usfirst.frc.team3328.robot.utilities.ADIS16448_IMU;
-//import org.usfirst.frc.team3328.robot.utilities.DriveTalons;
-
 public interface DriveSystem {
 
+	void moveForward(double speed);
 	
-	ADIS16448_IMU getImu();
-		
-	void resetDistance();
+	void moveBackward(double speed);
 	
-	double getDistance();
+	void turnLeft(double speed);
 	
-	boolean stopped();
+	void turnRight(double speed);
 	
-	void printSpeed();
+	void curveForwardLeft(double speed, double radius, double restraint);
+	
+	void curveForwardRight(double speed, double radius, double restraint);
+	
+	void curveBackwardLeft(double speed, double radius, double restriant);
+	
+	void curveBackwardRight(double speed, double radius, double restraint);
 	
 	void stop();
 
-	void autoAngle(double current, double desired);
-	
-	void upRestraint();
-	
-	void downRestraint();
-	
-	void move(double left, double right);
-
-	void controlledMove(double xAxis, double yAxis);
-
-	void fullSpeed();
-	
-	void thirdSpeed();
-
+	void setMotors(double left, double right);
 }

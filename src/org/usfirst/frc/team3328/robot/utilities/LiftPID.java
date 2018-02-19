@@ -1,18 +1,20 @@
 package org.usfirst.frc.team3328.robot.utilities;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PWMVictorSPX;
 
 public class LiftPID extends Thread{
 	//desired values
 	public volatile double desiredValue;
-	Encoder encoder = new Encoder(0,1);//change port\
-	DigitalInput limitSwitch = new DigitalInput(1);//change port
-	PWMVictorSPX victor = new PWMVictorSPX(1);
-	double KP = 0.1;
-	double KI = 0.0;
-	double KD = 0.0;
+	Encoder encoder;
+	DigitalInput limitSwitch;
+	TalonSRX talon;
+	double KP;
+	double KI;
+	double KD;
 		
 	//intermediate values for PID
 	double proportional;
@@ -27,24 +29,26 @@ public class LiftPID extends Thread{
 	
 	//time storage variables
 	double timeChange;
-	long lastTime;
+	long lastTime = System.nanoTime();
 	
 	//{left drive value, right drive value}
 	double motorValue;
 	
-	public LiftPID(double KP, double KI, double KD, Encoder encoder, DigitalInput limitSwitch, PWMVictorSPX victor) {
+	public LiftPID(double KP, double KI, double KD, Encoder encoder, DigitalInput limitSwitch, TalonSRX talon) {
 		this.KP = KP;
 		this.KI = KI;
 		this.KD = KD;
 		this.encoder = encoder;
 		this.limitSwitch = limitSwitch;
-		this.victor = victor;
+		this.talon = talon;
 	}
 	
 	public void run() {
 		while(true) {
-			victor.set(getMotorValue());
-			
+//			talon.set(ControlMode.PercentOutput, getMotorValue());
+			talon.set(ControlMode.PercentOutput, 0);
+
+			Logger.log("lift encoder value ", encoder.get(), LogLevel.debug);
 		}
 	}
 	
@@ -71,8 +75,9 @@ public class LiftPID extends Thread{
 		integral = KI*integralSum;
 		
 		//calculate change in time
-		derivative = KD*(errorOld - error) / timeChange;
+		derivative = timeChange == 0 ?  KD*(errorOld - error) / timeChange : 0;
 		
+
 		//integral reset for small or large errors
 		if(Math.abs(error)<2) {
 			integralSum=0;

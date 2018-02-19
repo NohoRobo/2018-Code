@@ -12,6 +12,8 @@ public class DriveEncoders {
 		this.left = left;
 		this.right.setReverseDirection(false);
 		this.left.setReverseDirection(true);
+		this.right.setDistancePerPulse((6*Math.PI)/256);
+		this.left.setDistancePerPulse((6*Math.PI)/256);
 	}
 	
 	public void reset(){

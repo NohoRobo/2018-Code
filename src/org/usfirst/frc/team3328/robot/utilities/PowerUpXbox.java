@@ -29,7 +29,7 @@ public class PowerUpXbox implements NewController {
 
 	@Override
 	public double getY() {
-		return xbox.getY();
+		return xbox.getRawAxis(1);
 	}
 
 	@Override

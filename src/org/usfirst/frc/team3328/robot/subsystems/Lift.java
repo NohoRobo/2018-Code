@@ -1,13 +1,7 @@
 package org.usfirst.frc.team3328.robot.subsystems;
 
 public interface Lift {
-
-	boolean isStopped();
-	
-	void stop();
-	
-	double getHeight();
-	
+			
 	void toScaleHigh();
 	
 	void toScaleMid();
@@ -17,9 +11,13 @@ public interface Lift {
 	void toSwitch();
 	
 	void toGround();
-	
-	void reset();
 
-	void controlledMove(double yAxis);
+	void controlledMove(double power);
+
+	void limitReset();
+
+	int getEncoderValue();
+
+	void init();
 	
 }

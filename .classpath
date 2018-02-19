@@ -66,5 +66,7 @@
 	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-web-2.10.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-web-2.10.0-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Nohorobo/git/2018-Code/libraries/apache-log4j-2.10.0-bin/log4j-web-2.10.0-sources.jar"/>
+	<classpathentry kind="var" path="USERLIBS_DIR/CTRE_Phoenix-sources.jar"/>
+	<classpathentry kind="var" path="USERLIBS_DIR/CTRE_Phoenix.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
