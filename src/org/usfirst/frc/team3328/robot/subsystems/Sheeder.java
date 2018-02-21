@@ -7,14 +7,8 @@ public interface Sheeder {
 	void feed();
 	
 	void stop();
-		
-	void extend();
-	
-	void contract();
 
-	void holdPiston();
-
-	boolean isExtended();
+	void setTo(double d);
 
 	
 

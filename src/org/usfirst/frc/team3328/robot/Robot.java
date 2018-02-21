@@ -1,27 +1,26 @@
 package org.usfirst.frc.team3328.robot;
 
-import org.usfirst.frc.team3328.robot.autocontrollers.AutoForward;
 import org.usfirst.frc.team3328.robot.subsystems.DriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.Lift;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpDriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
+import org.usfirst.frc.team3328.robot.subsystems.PowerUpRamp;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpSheeder;
+import org.usfirst.frc.team3328.robot.subsystems.Ramp;
 import org.usfirst.frc.team3328.robot.subsystems.Sheeder;
-import org.usfirst.frc.team3328.robot.utilities.DriveEncoders;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox;
 
 import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
-//import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -32,6 +31,7 @@ public class Robot extends IterativeRobot {
 	DriveSystem driveSystem;
 	Lift lift;
 	Sheeder sheeder;
+	Ramp ramp;
 
 	Encoder leftEncoder;
 	Encoder rightEncoder;
@@ -44,8 +44,6 @@ public class Robot extends IterativeRobot {
 	PIDController leftPID;
 	PIDController rightPID;
 	
-	Timer _sheedTimer;
-
 	boolean firstTimeRunning = true;
 
 	@Override
@@ -53,9 +51,7 @@ public class Robot extends IterativeRobot {
 		//		stream = CameraServer.getInstance();
 		//		usbCam = stream.startAutomaticCapture();
 		rightEncoder = new Encoder(2,3);
-		leftEncoder = new Encoder(0,1, true);
-		
-		_sheedTimer = new Timer();
+		leftEncoder = new Encoder(0,1, true);		
 
 		left = new VictorSP(0);
 		right = new VictorSP(1);
@@ -69,30 +65,36 @@ public class Robot extends IterativeRobot {
 				leftEncoder, left);
 		rightPID = new PIDController(KP, KI, KD, //tuned on carpet: (-0.02, 0, -0.0001)
 				rightEncoder, right);
-
+		
 		driveSystem = new PowerUpDriveSystem(left, right);
-		lift = new PowerUpLift(0.02, 0.001, 0,
-				new TalonSRX(3));
 		sheeder = new PowerUpSheeder(
 				new PWMVictorSPX(4), 
-				new PWMVictorSPX(5) 
-//				new DoubleSolenoid(0,1)
-				);
-
+				new PWMVictorSPX(5));
+		lift = new PowerUpLift(
+				0.02, 0, 0,
+				new TalonSRX(3), 
+				new DigitalInput(6));
+		ramp = new PowerUpRamp(
+				new Spark(2), 
+				new Servo(6), 
+				new Servo(7));
+		
 		logic = new ControllerLogic(
+				leftEncoder,
+				rightEncoder,
+				leftPID,
+				rightPID,
 				driveSystem,
 				sheeder, 
 				lift, 
-				new Timer(),
+				ramp,
 				new PowerUpXbox(0),
 				new PowerUpXbox(1));
 
-		auto = new Auton(leftPID, rightPID, 
-				leftEncoder, rightEncoder, firstTimeRunning);
+		auto = new Auton(0, leftPID, rightPID, 
+				leftEncoder, rightEncoder, lift, sheeder);
 
 		lift.init();
-		
-		
 	}
 
 	@Override
@@ -103,23 +105,26 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {		
 		auto.run();
+		System.out.println("Lift Encoder Value" + lift.getEncoderValue());
+		SmartDashboard.putNumber("RightEncoder", rightEncoder.getDistance());
+		SmartDashboard.putNumber("LeftEncoder", leftEncoder.getDistance());
 	}  
 
 	@Override
 	public void teleopPeriodic() {
 //		System.out.printf("RightDistance\t%.3f\t|\tLeftDistance\t%.3f\n", rightEncoder.getDistance(), leftEncoder.getDistance());
 		if(firstTimeRunning) {
-			rightPID.disable();
 			leftPID.disable();
+			rightPID.disable();
 			firstTimeRunning = false;
 		}
 		logic.run();
-		System.out.println("Lift Encoder Value " + lift.getEncoderValue());	
+		SmartDashboard.putNumber("RightEncoder", rightEncoder.getDistance());
+		SmartDashboard.putNumber("LeftEncoder", leftEncoder.getDistance());
 	}
 
 	@Override
 	public void testPeriodic() {
-		firstTimeRunning = true;
 	}
 
 

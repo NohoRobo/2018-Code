@@ -8,13 +8,14 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PowerUpLift implements Lift {
 
 	TalonSRX _talon;
-	DigitalInput limitswitch;
+	DigitalInput _limitSwitch;
 	
-	public double restraint = 6;
+	public double restraint = 4;
 	int _talonTimeout = 10;
     int _talonLoopIdx = 0;
     int _talonSlotIdx = 0;
@@ -23,19 +24,21 @@ public class PowerUpLift implements Lift {
     public double _KI;
     public double _KD;
 	
-	private static final int SCALE_HIGH_POSITION = 33170; 
-	private static final int SCALE_MID_POSITION = 27572; 
-	private static final int SCALE_LOW_POSITION = 21750;
-	private static final int SWITCH_POSITION = 11120;
-	private static final int EXCHANGE_POSITION = 0;
+	public static final int SCALE_HIGH_POSITION = 33170; 
+	public static final int SCALE_MID_POSITION = 27572; 
+	public static final int SCALE_LOW_POSITION = 21750;
+	public static final int SWITCH_POSITION = 11120;
+	public static final int EXCHANGE_POSITION = 0;
 	
-	public PowerUpLift(double KP, double KI, double KD, TalonSRX talon) {
+	public PowerUpLift(double KP, double KI, double KD, 
+					   TalonSRX talon, DigitalInput limitSwitch) {
 		this._KP = KP;
 		this._KI = KI;
 		this._KD = KD;
 		this._talon = talon;
+		this._limitSwitch = limitSwitch;
 	}
-	
+		
 	@Override
 	public void init() {
 		_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,_talonLoopIdx,_talonTimeout);
@@ -53,29 +56,36 @@ public class PowerUpLift implements Lift {
 		_talon.setSelectedSensorPosition(0, _talonLoopIdx, _talonTimeout);
 	}
 	
-	@Override
-	public void toScaleHigh() {
-		_talon.set(ControlMode.Position,(SCALE_HIGH_POSITION));
-	}
+	@Override 
+	public void autoMoveTo(int position) {
+		_talon.set(ControlMode.Position, position);
+		SmartDashboard.putNumber("Lift Setpoint", _talon.getClosedLoopTarget(_talonSlotIdx));
 
-	@Override
-	public void toScaleMid() {
-		_talon.set(ControlMode.Position,(SCALE_MID_POSITION));
 	}
-
+	
 	@Override
-	public void toScaleLow() {
-		_talon.set(ControlMode.Position,(SCALE_LOW_POSITION));
+	public int getScaleHigh() {
+		return SCALE_HIGH_POSITION;
 	}
-
+	
 	@Override
-	public void toSwitch() {
-		_talon.set(ControlMode.Position,(SWITCH_POSITION));
+	public int getScaleMid() {
+		return SCALE_MID_POSITION;
 	}
-
+	
 	@Override
-	public void toGround() {
-		_talon.set(ControlMode.Position,(EXCHANGE_POSITION));
+	public int getScaleLow() {
+		return SCALE_LOW_POSITION;
+	}
+	
+	@Override
+	public int getSwitch() {
+		return SWITCH_POSITION;
+	}
+	
+	@Override
+	public int getGround() {
+		return EXCHANGE_POSITION;
 	}
 	
 	@Override
@@ -84,8 +94,10 @@ public class PowerUpLift implements Lift {
 	}
 	
 	@Override
-	public void limitReset() {
-		_talon.setSelectedSensorPosition(0, _talonLoopIdx, _talonTimeout);
+	public void resetLimitIfAtBottom() {
+		if(_limitSwitch.get()) {
+			_talon.setSelectedSensorPosition(0, _talonLoopIdx, _talonTimeout);
+		}
 	}
 	
 	@Override

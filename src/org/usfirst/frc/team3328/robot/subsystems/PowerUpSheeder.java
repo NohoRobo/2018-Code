@@ -1,7 +1,6 @@
 package org.usfirst.frc.team3328.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
 
 public class PowerUpSheeder implements Sheeder {
@@ -9,15 +8,16 @@ public class PowerUpSheeder implements Sheeder {
 	PWMVictorSPX ls;
 	PWMVictorSPX rs;
 	DigitalInput _limitswitch;
-	DoubleSolenoid _piston;
 	private double speed = .3; //subject to change and must be less than 1
 	
-	public PowerUpSheeder (/*DigitalInput limitswitch,*/ PWMVictorSPX leftSheeder, PWMVictorSPX rightSheeder
-							  /*,DoubleSolenoid piston*/) {
+	public PowerUpSheeder (/*DigitalInput limitswitch,*/ PWMVictorSPX leftSheeder, PWMVictorSPX rightSheeder) {
 //		this._limitswitch = limitswitch;	
 		this.ls = leftSheeder;
 		this.rs = rightSheeder;
-//		this._piston = piston;
+	}
+	public void setTo(double _speed) {
+		ls.set(_speed); 
+		rs.set(-_speed);
 	}
 	
 	@Override
@@ -36,28 +36,5 @@ public class PowerUpSheeder implements Sheeder {
 	public void stop() {
 		ls.set(0); 
 		rs.set(0);
-	}
-	
-	
-
-	@Override
-	public void extend() {
-		_piston.set(DoubleSolenoid.Value.kForward);		
-	}
-
-	@Override
-	public void contract() {
-		_piston.set(DoubleSolenoid.Value.kReverse);		
-		
-	}
-	
-	@Override
-	public void holdPiston() {
-		_piston.set(DoubleSolenoid.Value.kOff);	
-	}
-	
-	@Override
-	public boolean isExtended() {
-		return _piston.equals(DoubleSolenoid.Value.kForward);
 	}
 }

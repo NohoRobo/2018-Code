@@ -29,7 +29,7 @@ public class FakeController implements Controller {
 	}
 
 	@Override
-	public double getY() {
+	public double getLeftY() {
 		// TODO Auto-generated method stub
 		return ySpeed;
 	}
