@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3328.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Timer;
+
 public interface Lift {
 
 	void controlledMove(double power);

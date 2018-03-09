@@ -10,6 +10,8 @@ public interface Sheeder {
 
 	void setTo(double d);
 
+	void hold();
+
 	
 
 }

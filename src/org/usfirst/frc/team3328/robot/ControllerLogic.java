@@ -50,6 +50,7 @@ public class ControllerLogic {
 	final double deadzone = .15;
 	double restraint = 1;
 	boolean macroControl = false;
+	boolean manualFeeder = false;
 
 	public ControllerLogic(Encoder leftTeleopEncoder, Encoder rightTeleopEncoder, PIDController leftTeleopPID,
 						   PIDController rightTeleopPID, DriveSystem driveSystem,
@@ -76,67 +77,26 @@ public class ControllerLogic {
 				(Math.abs(_driveCont.getX())>0.2?_driveCont.getX():0)),speedOf(//left
 						_driveCont.getRightTrigger()-_driveCont.getLeftTrigger()-
 						(Math.abs(_driveCont.getX())>0.2?_driveCont.getX():0)));//right
-			}
-
-		/*		//turn left and right
-		 if(xjoyStickisMoved(_driveCont)) {
-			 if (_driveCont.getX() > 0) {
-				 _driveSystem.turnRight(speedOf(_driveCont.getX()));
-			 } else if (_driveCont.getX() < 0) {
-				 _driveSystem.turnLeft(speedOf(-_driveCont.getX()));
-			 } else {
-				 _driveSystem.moveForward(0);
-			 }
-		 }
-
-		 //move forward and backward
-		 if(rightTriggerisPressed(_driveCont) || leftTriggerisPressed(_driveCont)) {
-			 if (_driveCont.getRightTrigger() > _driveCont.getLeftTrigger()) 
-				 _driveSystem.moveForward(speedOf(_driveCont.getRightTrigger()));
-			 else if (_driveCont.getLeftTrigger() > _driveCont.getRightTrigger())
-				 _driveSystem.moveBackward(speedOf(_driveCont.getLeftTrigger()));
-			 else 
-				 _driveSystem.moveForward(0);
-		 }
-		 //curveLeftForward
-		 if(rightTriggerisPressed(_driveCont) && (_driveCont.getX() < -0.2)) 
-			 _driveSystem.curveForwardLeft(speedOf(_driveCont.getRightTrigger()),
-			  							   speedOf(_driveCont.getX()), restraint); 
-
-		 //curveRightForward
-		 if(rightTriggerisPressed(_driveCont) && (_driveCont.getX() > 0.2)) 
-			 _driveSystem.curveForwardRight(speedOf(_driveCont.getRightTrigger()), 
-			 								speedOf(_driveCont.getX()), restraint); 
-
-		 //curveLeftBackward
-		 if(leftTriggerisPressed(_driveCont) && (_driveCont.getX() < -0.2)) 
-			 _driveSystem.curveBackwardLeft(speedOf(_driveCont.getLeftTrigger()), 
-			 								speedOf(_driveCont.getX()), restraint); 
-
-		 //curveRightBackward
-		 if(leftTriggerisPressed(_driveCont) && (_driveCont.getX() > 0.2)) 
-			 _driveSystem.curveBackwardRight(speedOf(_driveCont.getLeftTrigger()), 
-			 								speedOf(_driveCont.getX()), restraint);  
-		 */		
+		}
 		//changeSpeedRestraint
 		if(_driveCont.getButtonRelease(Buttons.RBUMP)) 
 			setHighSpeed();
 		else if(_driveCont.getButtonRelease(Buttons.LBUMP)) 
 			setLowSpeed();
 		
-		//sheeder - feed and shoot
+		//sheeder - chew chew
 		if (_utilCont.getButtonRelease(Buttons.BACK)) {
 			_sheederTimer.reset();
 			_sheederTimer.start();
 		}
-		if(_sheederTimer.get() >= 0.3) { 
+		if(_sheederTimer.get() >= 0.1) { 
 			_sheeder.stop();
 			_sheederTimer.stop();
 			_sheederTimer.reset();
-		} else if(_sheederTimer.get() >= 0.1) {
+		} else if(_sheederTimer.get() >= 0.03) {
 			_sheeder.stop();
 			_sheeder.feed();
-		} else if(_sheederTimer.get() >= 0.01) {
+		} else if(_sheederTimer.get() >= 0.0) {
 			_sheeder.stop();
 			_sheeder.shoot();
 		}
@@ -145,22 +105,34 @@ public class ControllerLogic {
 		else if (_utilCont.getRightTrigger() > _utilCont.getLeftTrigger() && ( _utilCont.getRightTrigger() > .2))
 			_sheeder.feed();
 		else if(_sheederTimer.get()==0)
-				_sheeder.stop();
+				_sheeder.hold();
 		 		
 		//lift
-		if(_utilCont.getLeftY() > 0.2 || _utilCont.getLeftY() < -0.2) {
-				_lifter.controlledMove(_utilCont.getLeftY());
-		} else if(_utilCont.getButtonPress(Buttons.X)) {
+		if(Math.abs(_utilCont.getLeftY()) > 0.2) {
+			_lifter.controlledMove(_utilCont.getLeftY());
+			manualFeeder = true;
+		}
+		else if(manualFeeder = true) {
+			_lifter.controlledMove(0);
+		}
+		if(_utilCont.getButtonPress(Buttons.X)) {
 			_lifter.autoMoveTo(_lifter.getSwitch()); 
+			manualFeeder = false;
 		} else if(_utilCont.getButtonPress(Buttons.A)) {
 			_lifter.autoMoveTo(_lifter.getScaleLow()); 
+			manualFeeder = false;
 		} else if(_utilCont.getButtonPress(Buttons.B)) {
 			_lifter.autoMoveTo(_lifter.getScaleMid()); 
+			manualFeeder = false;
 		} else if(_utilCont.getButtonPress(Buttons.Y)) { 
 			_lifter.autoMoveTo(_lifter.getScaleHigh()); 
+			manualFeeder = false;
 		} else if(_utilCont.getButtonPress(Buttons.START)) {
 			_lifter.autoMoveTo(_lifter.getGround()); 
+			manualFeeder = false;
 		}
+		
+		//button for exchange?
 		
 		
 		//PID Move
@@ -198,7 +170,7 @@ public class ControllerLogic {
 		SmartDashboard.putNumber("Right Trigger Value", _driveCont.getRightTrigger());
 		SmartDashboard.putNumber("Left Trigger Value", _driveCont.getLeftTrigger());
 		SmartDashboard.putNumber("Restraint Value", restraint);	
-		SmartDashboard.putNumber("Lift Encoder Value", _lifter.getEncoderValue());
+		SmartDashboard.putNumber("Lift Encoder Value-teleop", _lifter.getEncoderValue());
 		
 
 	}

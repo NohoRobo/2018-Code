@@ -13,6 +13,7 @@ import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
@@ -38,18 +40,20 @@ public class Robot extends IterativeRobot {
 	VictorSP left;
 	VictorSP right;
 
-	CameraServer stream;
-	UsbCamera usbCam;
+	//CameraServer stream;
+	//UsbCamera usbCam;
 
 	PIDController leftPID;
 	PIDController rightPID;
+	
+	ADXRS450_Gyro gyro;
 	
 	boolean firstTimeRunning = true;
 
 	@Override
 	public void robotInit() {
-		//		stream = CameraServer.getInstance();
-		//		usbCam = stream.startAutomaticCapture();
+	//	stream = CameraServer.getInstance();
+	//	usbCam = stream.startAutomaticCapture();
 		rightEncoder = new Encoder(2,3);
 		leftEncoder = new Encoder(0,1, true);		
 
@@ -71,7 +75,7 @@ public class Robot extends IterativeRobot {
 				new PWMVictorSPX(4), 
 				new PWMVictorSPX(5));
 		lift = new PowerUpLift(
-				0.02, 0, 0,
+				0.06, 0, 0,
 				new TalonSRX(3), 
 				new DigitalInput(6));
 		ramp = new PowerUpRamp(
@@ -92,9 +96,10 @@ public class Robot extends IterativeRobot {
 				new PowerUpXbox(1));
 
 		auto = new Auton(0, leftPID, rightPID, 
-				leftEncoder, rightEncoder, lift, sheeder);
+				leftEncoder, rightEncoder, gyro, lift, sheeder);
 
 		lift.init();
+//		gyro.calibrate();
 	}
 
 	@Override
@@ -116,6 +121,7 @@ public class Robot extends IterativeRobot {
 		if(firstTimeRunning) {
 			leftPID.disable();
 			rightPID.disable();
+			lift.autoMoveTo(lift.getSwitch());
 			firstTimeRunning = false;
 		}
 		logic.run();
