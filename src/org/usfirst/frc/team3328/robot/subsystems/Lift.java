@@ -23,5 +23,11 @@ public interface Lift {
 	int getScaleMid();
 
 	void resetLimitIfAtBottom();
+
+	int getExchangeFeed();
+
+	int getExchangeShoot();
+
+	void calibrate();
 	
 }

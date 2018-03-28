@@ -40,8 +40,8 @@ public class Robot extends IterativeRobot {
 	VictorSP left;
 	VictorSP right;
 
-	//CameraServer stream;
-	//UsbCamera usbCam;
+	CameraServer stream;
+	UsbCamera usbCam;
 
 	PIDController leftPID;
 	PIDController rightPID;
@@ -52,8 +52,8 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void robotInit() {
-	//	stream = CameraServer.getInstance();
-	//	usbCam = stream.startAutomaticCapture();
+		stream = CameraServer.getInstance();
+		usbCam = stream.startAutomaticCapture();
 		rightEncoder = new Encoder(2,3);
 		leftEncoder = new Encoder(0,1, true);		
 
@@ -110,9 +110,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {		
 		auto.run();
-		System.out.println("Lift Encoder Value" + lift.getEncoderValue());
+		/*System.out.println("Lift Encoder Value" + lift.getEncoderValue());
 		SmartDashboard.putNumber("RightEncoder", rightEncoder.getDistance());
-		SmartDashboard.putNumber("LeftEncoder", leftEncoder.getDistance());
+		SmartDashboard.putNumber("LeftEncoder", leftEncoder.getDistance());*/
 	}  
 
 	@Override
@@ -121,7 +121,7 @@ public class Robot extends IterativeRobot {
 		if(firstTimeRunning) {
 			leftPID.disable();
 			rightPID.disable();
-			lift.autoMoveTo(lift.getSwitch());
+//			lift.autoMoveTo(lift.getExchangeFeed());
 			firstTimeRunning = false;
 		}
 		logic.run();

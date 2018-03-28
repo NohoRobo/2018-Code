@@ -49,8 +49,10 @@ public class ControllerLogic {
 
 	final double deadzone = .15;
 	double restraint = 1;
+	int maxHeight = 36000;
 	boolean macroControl = false;
 	boolean manualFeeder = false;
+	boolean highSpeed = true;
 
 	public ControllerLogic(Encoder leftTeleopEncoder, Encoder rightTeleopEncoder, PIDController leftTeleopPID,
 						   PIDController rightTeleopPID, DriveSystem driveSystem,
@@ -70,6 +72,7 @@ public class ControllerLogic {
 	}
 
 	public void run() {
+		
 		//drive
 		if(!macroControl) {
 			_driveSystem.setMotors(speedOf(
@@ -79,33 +82,36 @@ public class ControllerLogic {
 						(Math.abs(_driveCont.getX())>0.2?_driveCont.getX():0)));//right
 		}
 		//changeSpeedRestraint
-		if(_driveCont.getButtonRelease(Buttons.RBUMP)) 
+		if(_driveCont.getButtonRelease(Buttons.RBUMP)) {
 			setHighSpeed();
-		else if(_driveCont.getButtonRelease(Buttons.LBUMP)) 
+			highSpeed = true;
+		} else if(_driveCont.getButtonRelease(Buttons.LBUMP)) {
 			setLowSpeed();
+			highSpeed = false;
+		}
 		
 		//sheeder - chew chew
 		if (_utilCont.getButtonRelease(Buttons.BACK)) {
 			_sheederTimer.reset();
 			_sheederTimer.start();
 		}
-		if(_sheederTimer.get() >= 0.1) { 
+		if(_sheederTimer.get() >= 0.3) { 
 			_sheeder.stop();
 			_sheederTimer.stop();
 			_sheederTimer.reset();
-		} else if(_sheederTimer.get() >= 0.03) {
+		} else if(_sheederTimer.get() >= 0.06) {
 			_sheeder.stop();
 			_sheeder.feed();
-		} else if(_sheederTimer.get() >= 0.0) {
+		} else if(_sheederTimer.get() > 0.0) {
 			_sheeder.stop();
 			_sheeder.shoot();
 		}
-		if (_utilCont.getRightTrigger() < _utilCont.getLeftTrigger() && (_utilCont.getLeftTrigger() > .2))
-			_sheeder.shoot();
-		else if (_utilCont.getRightTrigger() > _utilCont.getLeftTrigger() && ( _utilCont.getRightTrigger() > .2))
+		if (/*(_utilCont.getLeftTrigger() < _utilCont.getRightTrigger()) && */(_utilCont.getLeftTrigger() > .2))
 			_sheeder.feed();
+		else if (/*(_utilCont.getLeftTrigger() > _utilCont.getRightTrigger()) &&*/ ( _utilCont.getRightTrigger() > .2))
+			_sheeder.shoot();
 		else if(_sheederTimer.get()==0)
-				_sheeder.hold();
+			_sheeder.hold();
 		 		
 		//lift
 		if(Math.abs(_utilCont.getLeftY()) > 0.2) {
@@ -113,13 +119,20 @@ public class ControllerLogic {
 			manualFeeder = true;
 		}
 		else if(manualFeeder = true) {
-			_lifter.controlledMove(0);
+			if(_lifter.getEncoderValue()<500) {
+				SmartDashboard.putBoolean("iftHoldOn", true);
+				_lifter.controlledMove(0.2);
+			}
+			else {
+				SmartDashboard.putBoolean("iftHoldOn", false);
+				_lifter.controlledMove(0);
+			}
 		}
-		if(_utilCont.getButtonPress(Buttons.X)) {
+/*		if(_utilCont.getButtonPress(Buttons.X)) {
 			_lifter.autoMoveTo(_lifter.getSwitch()); 
 			manualFeeder = false;
 		} else if(_utilCont.getButtonPress(Buttons.A)) {
-			_lifter.autoMoveTo(_lifter.getScaleLow()); 
+			_lifter.autoMoveTo(_lifter.getExchangeFeed()); 
 			manualFeeder = false;
 		} else if(_utilCont.getButtonPress(Buttons.B)) {
 			_lifter.autoMoveTo(_lifter.getScaleMid()); 
@@ -130,12 +143,15 @@ public class ControllerLogic {
 		} else if(_utilCont.getButtonPress(Buttons.START)) {
 			_lifter.autoMoveTo(_lifter.getGround()); 
 			manualFeeder = false;
+		} else if(_utilCont.getButtonPress(Buttons.RBUMP)) {
+			_lifter.autoMoveTo(_lifter.getExchangeShoot());
+			manualFeeder = false;
 		}
-		
+*/		
 		//button for exchange?
 		
 		
-		//PID Move
+/*		//PID Move
 		if (_driveCont.getButtonRelease(Buttons.BACK)) {
 			_leftTeleopPID.setSetpoint(_leftTeleopEncoder.getDistance() + 4);
 			_rightTeleopPID.setSetpoint(_rightTeleopEncoder.getDistance() + 4);
@@ -152,8 +168,8 @@ public class ControllerLogic {
 			_rightTeleopPID.disable();
 			macroControl = false;
 		}
-		
-		//ramp
+*/		
+/*		//ramp
 		if(_ramp.isDeployed()) {
 			if(_utilCont.getRightY() > 0.2 || _utilCont.getRightY() < -0.2) 
 				_ramp.winch(_utilCont.getRightY());
@@ -162,37 +178,19 @@ public class ControllerLogic {
 		} else if(_utilCont.getButtonRelease(Buttons.RIGHTSTICK)) 
 			_ramp.deploy();
 		
-			
+*/			
 
-		SmartDashboard.putNumber("choo choo timer", _sheederTimer.get());
-		SmartDashboard.putNumber("X Joystick Value", _driveCont.getX());
-		SmartDashboard.putNumber("Y Joystick Value", _driveCont.getLeftY());
-		SmartDashboard.putNumber("Right Trigger Value", _driveCont.getRightTrigger());
-		SmartDashboard.putNumber("Left Trigger Value", _driveCont.getLeftTrigger());
-		SmartDashboard.putNumber("Restraint Value", restraint);	
+//		SmartDashboard.putNumber("choo choo timer", _sheederTimer.get());
+//		SmartDashboard.putNumber("X Joystick Value", _driveCont.getX());
+//		SmartDashboard.putNumber("Y Joystick Value", _driveCont.getLeftY());
+//		SmartDashboard.putNumber("Right Trigger Value", _driveCont.getRightTrigger());
+//		SmartDashboard.putNumber("Left Trigger Value", _driveCont.getLeftTrigger());
+		SmartDashboard.putBoolean("High Speed Mode", highSpeed);	
 		SmartDashboard.putNumber("Lift Encoder Value-teleop", _lifter.getEncoderValue());
-		
-
-	}
+		}
 
 	private double speedOf(double speed) {
 		return (speed * speed * Math.signum(speed)) / restraint;
-	}
-
-	private boolean rightTriggerisPressed(Controller controller) {
-		return controller.getRightTrigger() > deadzone;
-	}
-
-	private boolean leftTriggerisPressed(Controller controller) {
-		return controller.getLeftTrigger() > deadzone;
-	}
-
-	private boolean xjoyStickisMoved(Controller controller) {
-		return controller.getX() != 0;
-	}
-
-	private boolean yjoyStickisMoved(Controller controller) {
-		return controller.getLeftY() != 0;
 	}
 
 	private void setHighSpeed() {
@@ -200,7 +198,7 @@ public class ControllerLogic {
 	}
 
 	private void setLowSpeed() {
-		restraint = 5;
+		restraint = 3;
 	}
 }
 
