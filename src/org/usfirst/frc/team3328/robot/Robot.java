@@ -10,7 +10,7 @@ import org.usfirst.frc.team3328.robot.subsystems.Ramp;
 import org.usfirst.frc.team3328.robot.subsystems.Sheeder;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox;
 
-//import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
