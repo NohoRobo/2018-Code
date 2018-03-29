@@ -10,7 +10,7 @@ import org.usfirst.frc.team3328.robot.subsystems.Ramp;
 import org.usfirst.frc.team3328.robot.subsystems.Sheeder;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox;
 
-import com.ctre.phoenix.motorcontrol.can.*;
+//import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -45,6 +45,8 @@ public class Robot extends IterativeRobot {
 
 	PIDController leftPID;
 	PIDController rightPID;
+	PIDController rightTurningPID;
+	PIDController leftTurningPID;
 	
 	ADXRS450_Gyro gyro;
 	
@@ -64,11 +66,19 @@ public class Robot extends IterativeRobot {
 		double KP = 0;
 		double KI = 0;
 		double KD = 0;
+		
+		double turningKP = 0;
+		double turningKI = 0;
+		double turningKD = 0;
 
 		leftPID = new PIDController(KP, KI, KD, //tuned on carpet: (-0.02, 0, -0.0001)
 				leftEncoder, left);
 		rightPID = new PIDController(KP, KI, KD, //tuned on carpet: (-0.02, 0, -0.0001)
 				rightEncoder, right);
+		leftTurningPID = new PIDController(turningKP, turningKI, turningKD,
+				gyro, left);
+		rightTurningPID = new PIDController(turningKP, turningKI, turningKD,
+				gyro, right);
 		
 		driveSystem = new PowerUpDriveSystem(left, right);
 		sheeder = new PowerUpSheeder(
@@ -95,7 +105,7 @@ public class Robot extends IterativeRobot {
 				new PowerUpXbox(0),
 				new PowerUpXbox(1));
 
-		auto = new Auton(0, leftPID, rightPID, 
+		auto = new Auton(0, leftPID, rightPID, leftTurningPID, rightTurningPID, 
 				leftEncoder, rightEncoder, gyro, lift, sheeder);
 
 		lift.init();

@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
@@ -17,6 +16,9 @@ public class Auton {
 	
 	PIDController _leftPID;
 	PIDController _rightPID;
+	
+	PIDController _leftTurningPID;
+	PIDController _rightTurningPID;
 	
 	Encoder _leftEncoder;
 	Encoder _rightEncoder;
@@ -51,11 +53,14 @@ public class Auton {
 	
 	//?TODO Delete autonSelected
 	public Auton(int autonSelected, PIDController leftPID, PIDController rightPID, 
+				 PIDController leftTurningPID, PIDController rightTurningPID,
 				 Encoder leftEncoder, Encoder rightEncoder, ADXRS450_Gyro gyro,
 				 Lift lifter, Sheeder sheeder) {
 		this._autonSelected = autonSelected;
 		this._leftPID = leftPID;
 		this._rightPID = rightPID;
+		this._leftTurningPID = leftTurningPID;
+		this._rightTurningPID = rightTurningPID;
 		this._leftEncoder = leftEncoder;
 		this._rightEncoder = rightEncoder;
 		this._gyro = gyro;
@@ -69,12 +74,19 @@ public class Auton {
 	public void initDrivePID() {
 		_leftEncoder.reset();
 		_rightEncoder.reset();
+		_gyro.reset();
+		
+		
 		_leftPID.setPercentTolerance(5);
 		_rightPID.setPercentTolerance(5);
+		_leftTurningPID.setPercentTolerance(5);
+		_rightTurningPID.setPercentTolerance(5);
+		
 		_leftPID.setSetpoint(0);
 		_rightPID.setSetpoint(0);
-		_leftPID.enable();
-		_rightPID.enable();
+		_leftTurningPID.setSetpoint(0);
+		_rightTurningPID.setSetpoint(0);
+		
 	}
 	
 	public void init() {
@@ -422,6 +434,10 @@ public class Auton {
 	}
 	
 	public void turnLeft(double distance) {
+		_leftTurningPID.enable();
+		_rightTurningPID.enable();
+		_leftPID.disable();
+		_rightPID.disable();
 //		initAngle = _gyro.getAngle();
 		_leftPID.setPID(-0.04, 0, 0);
 		_rightPID.setPID(-0.04, 0, 0);
@@ -437,6 +453,10 @@ public class Auton {
 	}
 	
 	public void move(double distance) {
+		_leftTurningPID.disable();
+		_rightTurningPID.disable();
+		_leftPID.enable();
+		_rightPID.enable();
 		_leftPID.setPID(-0.006 ,0, 0);
 		_rightPID.setPID(-0.006 ,0, 0);
 		_leftPID.setSetpoint(_leftPID.getSetpoint() - distance);
