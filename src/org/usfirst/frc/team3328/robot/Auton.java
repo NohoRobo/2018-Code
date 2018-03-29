@@ -2,6 +2,7 @@ package org.usfirst.frc.team3328.robot;
 
 import org.usfirst.frc.team3328.robot.subsystems.Lift;
 import org.usfirst.frc.team3328.robot.subsystems.Sheeder;
+import org.usfirst.frc.team3328.robot.utilities.PigeonGyroPIDInput;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
@@ -11,6 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+
+import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Auton {
 	
@@ -22,7 +25,7 @@ public class Auton {
 	
 	Encoder _leftEncoder;
 	Encoder _rightEncoder;
-	ADXRS450_Gyro _gyro;
+	PigeonGyroPIDInput _gyro;
 	
 	Lift _lifter;
 	Sheeder _sheeder;
@@ -39,7 +42,10 @@ public class Auton {
 	String autoSelected;
 	
 	double speedThresh = 2;
-	double allowableError = 12;
+	double allowableErrorDistance = 12;
+	double allowableErrorAngle = 3;
+	
+	boolean turning = false;
 	
 	double initAngle = 0;
 	double finalAngle = 0;
@@ -54,7 +60,7 @@ public class Auton {
 	//?TODO Delete autonSelected
 	public Auton(int autonSelected, PIDController leftPID, PIDController rightPID, 
 				 PIDController leftTurningPID, PIDController rightTurningPID,
-				 Encoder leftEncoder, Encoder rightEncoder, ADXRS450_Gyro gyro,
+				 Encoder leftEncoder, Encoder rightEncoder, PigeonGyroPIDInput gyro,
 				 Lift lifter, Sheeder sheeder) {
 		this._autonSelected = autonSelected;
 		this._leftPID = leftPID;
@@ -74,8 +80,7 @@ public class Auton {
 	public void initDrivePID() {
 		_leftEncoder.reset();
 		_rightEncoder.reset();
-		_gyro.reset();
-		
+		_gyro.setYaw(0, 0);//set to what		
 		
 		_leftPID.setPercentTolerance(5);
 		_rightPID.setPercentTolerance(5);
@@ -433,19 +438,20 @@ public class Auton {
 		_rightPID.disable();
 	}
 	
-	public void turnLeft(double distance) {
+	public void turnLeft(double angle) {
+		turning = true;
 		_leftTurningPID.enable();
 		_rightTurningPID.enable();
 		_leftPID.disable();
 		_rightPID.disable();
-//		initAngle = _gyro.getAngle();
-		_leftPID.setPID(-0.04, 0, 0);
-		_rightPID.setPID(-0.04, 0, 0);
-		_leftPID.setSetpoint(_leftPID.getSetpoint() + distance*Math.PI/15);
-		_rightPID.setSetpoint(_rightPID.getSetpoint() - distance*Math.PI/15);
+		initAngle = _gyro.getYaw();
+		_leftTurningPID.setPID(-0.04, 0, 0);//tune
+		_rightTurningPID.setPID(-0.04, 0, 0);
+		_leftTurningPID.setSetpoint(initAngle + angle);
+		_rightTurningPID.setSetpoint(initAngle - angle);
+		SmartDashboard.putNumber("Gyro Turn", finalAngle - initAngle);
 		waitForPID();
 //		finalAngle = _gyro.getAngle();
-		SmartDashboard.putNumber("Gyro Angle", finalAngle - initAngle);
 	}
 	
 	public void turnRight(double distance) {
@@ -453,14 +459,15 @@ public class Auton {
 	}
 	
 	public void move(double distance) {
+		turning = false;
 		_leftTurningPID.disable();
 		_rightTurningPID.disable();
 		_leftPID.enable();
 		_rightPID.enable();
 		_leftPID.setPID(-0.006 ,0, 0);
 		_rightPID.setPID(-0.006 ,0, 0);
-		_leftPID.setSetpoint(_leftPID.getSetpoint() - distance);
-		_rightPID.setSetpoint(_rightPID.getSetpoint() - distance);
+		_leftPID.setSetpoint(_leftEncoder.getDistance() - distance);
+		_rightPID.setSetpoint(_rightEncoder.getDistance() - distance);
 	}
 	public void moveD(double distance) {
 		move(distance);
@@ -483,10 +490,6 @@ public class Auton {
 			_liftTimer.reset();
 			_liftTimer.stop();
 		}
-		
-		
-		
-		
 	}
 	
 	public void pause(double time) {
@@ -497,7 +500,12 @@ public class Auton {
 	}
 		
 	public boolean isErrorGood() {
-		return Math.abs(_leftPID.getError()) < allowableError && Math.abs(_rightPID.getError()) < allowableError;
+		if(turning) {
+			return Math.abs(_leftPID.getError()) < allowableErrorDistance && Math.abs(_rightPID.getError()) < allowableErrorDistance;
+		}
+		else {
+			return Math.abs(_leftTurningPID.getError()) < allowableErrorAngle && Math.abs(_rightTurningPID.getError()) < allowableErrorAngle;
+		}
 	}
 	
 	public void waitForPID() {
