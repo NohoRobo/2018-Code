@@ -11,6 +11,7 @@ import org.usfirst.frc.team3328.robot.subsystems.Sheeder;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox;
 
 import com.ctre.phoenix.motorcontrol.can.*;
+import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -48,7 +50,7 @@ public class Robot extends IterativeRobot {
 	PIDController rightTurningPID;
 	PIDController leftTurningPID;
 	
-	ADXRS450_Gyro gyro;
+	PigeonIMU gyro;
 	
 	boolean firstTimeRunning = true;
 
