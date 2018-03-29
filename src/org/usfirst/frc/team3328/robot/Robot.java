@@ -14,6 +14,7 @@ import org.usfirst.frc.team3328.robot.utilities.PigeonGyroPIDInput;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.PIDSourceType;
 
 public class Robot extends IterativeRobot {
 	ControllerLogic logic;
@@ -50,7 +52,6 @@ public class Robot extends IterativeRobot {
 	PIDController rightTurningPID;
 	PIDController leftTurningPID;
 	
-	PigeonIMU imu;
 	PigeonGyroPIDInput gyro;
 	
 	boolean firstTimeRunning = true;
@@ -61,6 +62,7 @@ public class Robot extends IterativeRobot {
 		usbCam = stream.startAutomaticCapture();
 		rightEncoder = new Encoder(2,3);
 		leftEncoder = new Encoder(0,1, true);		
+		gyro = new PigeonGyroPIDInput(1,PIDSourceType.kDisplacement);//this is definitely wrong
 
 		left = new VictorSP(0);
 		right = new VictorSP(1);

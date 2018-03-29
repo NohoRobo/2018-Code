@@ -444,11 +444,10 @@ public class Auton {
 		_rightTurningPID.enable();
 		_leftPID.disable();
 		_rightPID.disable();
-		initAngle = _gyro.getYaw();
 		_leftTurningPID.setPID(-0.04, 0, 0);//tune
 		_rightTurningPID.setPID(-0.04, 0, 0);
-		_leftTurningPID.setSetpoint(initAngle + angle);
-		_rightTurningPID.setSetpoint(initAngle - angle);
+		_leftTurningPID.setSetpoint(_gyro.getYaw() + angle);
+		_rightTurningPID.setSetpoint(_gyro.getYaw() - angle);
 		SmartDashboard.putNumber("Gyro Turn", finalAngle - initAngle);
 		waitForPID();
 //		finalAngle = _gyro.getAngle();

@@ -30,9 +30,7 @@ public class PigeonGyroPIDInput extends PigeonIMU implements PIDSource {
 	}
 	
 	public double getYaw() {
-		double[] xyz = new double[3];
-		super.getYawPitchRoll(xyz);
-		return xyz[0];
+		return this.pidGet();
 	}
 	
 }
