@@ -8,7 +8,8 @@ public class PowerUpSheeder implements Sheeder {
 	PWMVictorSPX ls;
 	PWMVictorSPX rs;
 	DigitalInput _limitswitch;
-	private double speed = .5; //subject to change and must be less than 1
+	private double shootSpeed = .3; //subject to change and must be less than 1
+	private double feedSpeed = .5;
 	
 	public PowerUpSheeder (/*DigitalInput limitswitch,*/ PWMVictorSPX leftSheeder, PWMVictorSPX rightSheeder) {
 //		this._limitswitch = limitswitch;	
@@ -22,8 +23,8 @@ public class PowerUpSheeder implements Sheeder {
 	
 	@Override
 	public void feed() {
-		ls.set(speed); 
-		rs.set(-speed);
+		ls.set(feedSpeed); 
+		rs.set(-feedSpeed);
 	}
 	
 	@Override 
@@ -34,8 +35,8 @@ public class PowerUpSheeder implements Sheeder {
 	
 	@Override
 	public void shoot() {
-		ls.set(-speed); 
-		rs.set(speed);
+		ls.set(-shootSpeed); 
+		rs.set(shootSpeed);
 	}
 
 	@Override

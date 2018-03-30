@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3328.robot;
 
 import org.usfirst.frc.team3328.robot.subsystems.Lift;
+import org.usfirst.frc.team3328.robot.subsystems.Climb;
 import org.usfirst.frc.team3328.robot.subsystems.DriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
 import org.usfirst.frc.team3328.robot.subsystems.Ramp;
@@ -31,6 +32,9 @@ public class ControllerLogic {
 	DriveSystem _driveSystem;
 	Sheeder _sheeder;
 	Lift _lifter;
+	Ramp _ramp; 
+	Climb _climb;
+	
 	Controller _driveCont;
 	Controller _utilCont;
 	TalonSRX _talon;
@@ -40,7 +44,6 @@ public class ControllerLogic {
 	PIDController _rightTeleopPID;
 	DigitalInput _liftSwitch;
 	DigitalInput _sheedSwitch;
-	Ramp _ramp;
 	
 	Timer _sheederTimer = new Timer();
 	Timer driveMacroTimer = new Timer();	
@@ -50,23 +53,29 @@ public class ControllerLogic {
 	final double deadzone = .15;
 	double restraint = 1;
 	int maxHeight = 36000;
+	int minHeight = 0;
+	
 	boolean macroControl = false;
 	boolean manualFeeder = false;
 	boolean highSpeed = true;
+	boolean climbEnabled = false;
 
 	public ControllerLogic(Encoder leftTeleopEncoder, Encoder rightTeleopEncoder, PIDController leftTeleopPID,
 						   PIDController rightTeleopPID, DriveSystem driveSystem,
-						   Sheeder sheeder, Lift lifter, Ramp ramp, Controller driveCont, Controller utilCont) {
+						   Sheeder sheeder, Lift lifter, Ramp ramp, Climb climb, Controller driveCont, Controller utilCont) {
 		this._leftTeleopEncoder = leftTeleopEncoder;
 		this._rightTeleopEncoder = rightTeleopEncoder;
 		this._leftTeleopPID = leftTeleopPID;
 		this._rightTeleopPID = rightTeleopPID;
 		_leftTeleopPID.disable();
 		_rightTeleopPID.disable();
+		
 		this._driveSystem = driveSystem;
 		this._lifter = lifter;
 		this._sheeder = sheeder;
 		this._ramp = ramp;
+		this._climb = climb;
+		
 		this._driveCont = driveCont;
 		this._utilCont = utilCont;
 	}
@@ -90,7 +99,7 @@ public class ControllerLogic {
 			highSpeed = false;
 		}
 		
-		//sheeder - chew chew
+		//sheeder - choo choo
 		if (_utilCont.getButtonRelease(Buttons.BACK)) {
 			_sheederTimer.reset();
 			_sheederTimer.start();
@@ -115,11 +124,16 @@ public class ControllerLogic {
 		 		
 		//lift
 		if(Math.abs(_utilCont.getLeftY()) > 0.2) {
-			_lifter.controlledMove(_utilCont.getLeftY());
 			manualFeeder = true;
-		}
+			if((isMaxHeight() && _utilCont.getLeftY() <= -0.2) || (isMinHeight() && _utilCont.getLeftY() >= 0.2)) {
+				_lifter.controlledMove(0);
+			} 
+			else {
+				_lifter.controlledMove(_utilCont.getLeftY());
+			}
+		} 
 		else if(manualFeeder = true) {
-			if(_lifter.getEncoderValue()<500) {
+			if(_lifter.getEncoderValue()< 500) {
 				SmartDashboard.putBoolean("iftHoldOn", true);
 				_lifter.controlledMove(0.2);
 			}
@@ -179,6 +193,19 @@ public class ControllerLogic {
 			_ramp.deploy();
 		
 */			
+		//climb - testing
+		if(_utilCont.getButtonRelease(Buttons.RIGHTSTICK)) {
+			climbEnabled = true;
+		}
+		if( _utilCont.getRightY() < -0.2 && climbEnabled) {
+			_climb.winch(_utilCont.getRightY());
+		} else if (_utilCont.getRightY() > 0.2 && _utilCont.getButtonPress(Buttons.LBUMP)){
+			_climb.winch(_utilCont.getRightY());
+		} else {
+			_climb.winch(0);
+		} 
+		
+	
 
 //		SmartDashboard.putNumber("choo choo timer", _sheederTimer.get());
 //		SmartDashboard.putNumber("X Joystick Value", _driveCont.getX());
@@ -199,6 +226,20 @@ public class ControllerLogic {
 
 	private void setLowSpeed() {
 		restraint = 3;
+	}
+	
+	private boolean isMaxHeight() {
+		if(_lifter.getEncoderValue() >= maxHeight) {
+			return true;
+		} else 
+			return false;	
+	}
+	
+	private boolean isMinHeight() {
+		if(_lifter.getEncoderValue() <= minHeight) {
+			return true;
+		} else 
+			return false;
 	}
 }
 

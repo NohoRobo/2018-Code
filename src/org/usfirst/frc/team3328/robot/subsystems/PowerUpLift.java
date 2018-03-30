@@ -16,7 +16,7 @@ public class PowerUpLift implements Lift {
 	TalonSRX _talon;
 	DigitalInput _limitSwitch;
 	
-	public double restraint = 1.5;
+	public double restraint = 1;
 	int _talonTimeout = 10;
     int _talonLoopIdx = 0;
     int _talonSlotIdx = 0;
@@ -25,12 +25,12 @@ public class PowerUpLift implements Lift {
     public double _KI;
     public double _KD;
 	
-	public static final int SCALE_HIGH_POSITION = 33170; 
+	public static final int SCALE_HIGH_POSITION = 33170; //80-78 in
 	public static final int SCALE_MID_POSITION = 27572; 
 	public static final int SCALE_LOW_POSITION = 21750;
 	public static final int SWITCH_POSITION = 11120;
-	public static final int EXCHANGE_FEED = 0;
-	public static final int EXCHANGE_SHOOT = 0;
+	public static final int EXCHANGE_FEED = 0; // 20 in
+	public static final int EXCHANGE_SHOOT = 0; //2 in
 	public static final int EXCHANGE_POSITION = 0;
 	
 	public PowerUpLift(double KP, double KI, double KD, 
@@ -124,7 +124,7 @@ public class PowerUpLift implements Lift {
 		Timer timer = new Timer();
 		timer.reset();
 		timer.start();
-		while(!_limitSwitch.get()&&timer.get()<2) {;}
+		while(!_limitSwitch.get() && timer.get()< 2) {;}
 		_talon.set(ControlMode.Position, 0);
 		_talon.setSelectedSensorPosition(0, _talonLoopIdx, _talonTimeout);
 	}

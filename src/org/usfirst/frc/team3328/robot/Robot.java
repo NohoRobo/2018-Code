@@ -1,7 +1,9 @@
 package org.usfirst.frc.team3328.robot;
 
+import org.usfirst.frc.team3328.robot.subsystems.Climb;
 import org.usfirst.frc.team3328.robot.subsystems.DriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.Lift;
+import org.usfirst.frc.team3328.robot.subsystems.PowerUpClimb;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpDriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpRamp;
@@ -13,7 +15,7 @@ import org.usfirst.frc.team3328.robot.utilities.PigeonGyroPIDInput;
 
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix.sensors.PigeonIMU;
-
+import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -38,6 +40,7 @@ public class Robot extends IterativeRobot {
 	Lift lift;
 	Sheeder sheeder;
 	Ramp ramp;
+	Climb climb;
 
 	Encoder leftEncoder;
 	Encoder rightEncoder;
@@ -54,15 +57,17 @@ public class Robot extends IterativeRobot {
 	
 	PigeonGyroPIDInput gyro;
 	
+	boolean doneWithAuto = false;
 	boolean firstTimeRunning = true;
 
 	@Override
 	public void robotInit() {
 		stream = CameraServer.getInstance();
 		usbCam = stream.startAutomaticCapture();
+		
 		rightEncoder = new Encoder(2,3);
 		leftEncoder = new Encoder(0,1, true);		
-		gyro = new PigeonGyroPIDInput(1,PIDSourceType.kDisplacement);//this is definitely wrong
+		gyro = new PigeonGyroPIDInput(0, PIDSourceType.kDisplacement);//this is definitely wrong
 
 		left = new VictorSP(0);
 		right = new VictorSP(1);
@@ -94,9 +99,12 @@ public class Robot extends IterativeRobot {
 				new TalonSRX(3), 
 				new DigitalInput(6));
 		ramp = new PowerUpRamp(
-				new Spark(2), 
+				new Spark(9), //notbeingused 
 				new Servo(6), 
 				new Servo(7));
+		climb = new PowerUpClimb(
+				new Spark(3),
+				new Spark(2));
 		
 		logic = new ControllerLogic(
 				leftEncoder,
@@ -107,6 +115,7 @@ public class Robot extends IterativeRobot {
 				sheeder, 
 				lift, 
 				ramp,
+				climb,
 				new PowerUpXbox(0),
 				new PowerUpXbox(1));
 
@@ -114,7 +123,9 @@ public class Robot extends IterativeRobot {
 				leftEncoder, rightEncoder, gyro, lift, sheeder);
 
 		lift.init();
-//		gyro.calibrate();
+		gyro.setFusedHeading(0, 10);
+		gyro.enterCalibrationMode(CalibrationMode.BootTareGyroAccel, 10);
+		gyro.enterCalibrationMode(CalibrationMode.Temperature, 10);
 	}
 
 	@Override
@@ -123,11 +134,14 @@ public class Robot extends IterativeRobot {
 	}
 
 	@Override
-	public void autonomousPeriodic() {		
-		auto.run();
-		/*System.out.println("Lift Encoder Value" + lift.getEncoderValue());
+	public void autonomousPeriodic() {
+		if(!doneWithAuto) {
+			auto.run();
+			doneWithAuto = true;
+		}
+		System.out.println("Lift Encoder Value" + lift.getEncoderValue());
 		SmartDashboard.putNumber("RightEncoder", rightEncoder.getDistance());
-		SmartDashboard.putNumber("LeftEncoder", leftEncoder.getDistance());*/
+		SmartDashboard.putNumber("LeftEncoder", leftEncoder.getDistance());
 	}  
 
 	@Override
@@ -136,12 +150,15 @@ public class Robot extends IterativeRobot {
 		if(firstTimeRunning) {
 			leftPID.disable();
 			rightPID.disable();
+			leftTurningPID.disable();
+			rightTurningPID.disable();
 //			lift.autoMoveTo(lift.getExchangeFeed());
 			firstTimeRunning = false;
 		}
 		logic.run();
 		SmartDashboard.putNumber("RightEncoder", rightEncoder.getDistance());
 		SmartDashboard.putNumber("LeftEncoder", leftEncoder.getDistance());
+		SmartDashboard.putNumber("Gyro Value", gyro.getYaw());
 	}
 
 	@Override
