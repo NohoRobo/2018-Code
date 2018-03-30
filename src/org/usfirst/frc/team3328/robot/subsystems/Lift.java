@@ -29,5 +29,7 @@ public interface Lift {
 	int getExchangeShoot();
 
 	void calibrate();
+
+	void unfold();
 	
 }

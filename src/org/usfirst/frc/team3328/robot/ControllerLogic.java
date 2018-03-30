@@ -125,8 +125,11 @@ public class ControllerLogic {
 		//lift
 		if(Math.abs(_utilCont.getLeftY()) > 0.2) {
 			manualFeeder = true;
-			if((isMaxHeight() && _utilCont.getLeftY() <= -0.2) || (isMinHeight() && _utilCont.getLeftY() >= 0.2)) {
-				_lifter.controlledMove(0);
+			if(isMaxHeight() && _utilCont.getLeftY()<0) {
+				_lifter.controlledMove(Math.abs(_utilCont.getLeftY()));
+			}
+			else if(isMinHeight() && _utilCont.getLeftY()>0) {
+				_lifter.controlledMove(Math.abs(_utilCont.getLeftY()));
 			} 
 			else {
 				_lifter.controlledMove(_utilCont.getLeftY());
@@ -229,17 +232,11 @@ public class ControllerLogic {
 	}
 	
 	private boolean isMaxHeight() {
-		if(_lifter.getEncoderValue() >= maxHeight) {
-			return true;
-		} else 
-			return false;	
+		return _lifter.getEncoderValue() >= maxHeight;
 	}
 	
 	private boolean isMinHeight() {
-		if(_lifter.getEncoderValue() <= minHeight) {
-			return true;
-		} else 
-			return false;
+		return _lifter.getEncoderValue() <= minHeight;
 	}
 }
 

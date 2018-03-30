@@ -143,27 +143,9 @@ public class Auton {
 //,			_lifter.calibrate();
 			firstTime = false;
 		}
-		/*if(!leftSwitch)
-		{
-			moveD(93);
-			//liftUp(3);
-			pause(2);
-			_sheeder.shoot();
-			pause(2);
-			_sheeder.stop();
-		}
-		else if(leftSwitch)
-		{
-			moveD(93);
-		}*/
-
 		
 		moveD(130);
-		
-//		moveD(100);
-//		turnRightD(30);
-//		moveD(100);
-/*		
+/*
 		switch(_autonSelected){
 		case 0: //test
 			move(20);
@@ -525,5 +507,9 @@ public class Auton {
 				break;
 			}
 		}
+	}
+	public void unfold() {
+		_sheeder.hold();
+		_lifter.unfold();
 	}
 }

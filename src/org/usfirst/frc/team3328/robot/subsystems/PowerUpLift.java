@@ -128,4 +128,12 @@ public class PowerUpLift implements Lift {
 		_talon.set(ControlMode.Position, 0);
 		_talon.setSelectedSensorPosition(0, _talonLoopIdx, _talonTimeout);
 	}
+	public void unfold() {
+		_talon.set(ControlMode.Position, 300);
+		Timer timer = new Timer();
+		timer.reset();
+		timer.start();
+		while(timer.get()< 1) {;}
+		this.calibrate();
+	}
 }
