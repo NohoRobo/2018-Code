@@ -16,10 +16,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
-//import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Compressor;
 
 public class ControllerLogic {
 	
@@ -39,11 +37,11 @@ public class ControllerLogic {
 	DigitalInput _sheedSwitch;
 	
 	Timer _sheederTimer = new Timer();
-	Timer driveMacroTimer = new Timer();	
+	Timer driveMacroTimer = new Timer();
 
 	final double deadzone = .15;
 	double restraint = 1;
-	int maxHeight = 36000;
+	int maxHeight = 36400;
 	int minHeight = 0;
 	
 	boolean macroControl = false;
@@ -68,6 +66,7 @@ public class ControllerLogic {
 		
 		this._driveCont = driveCont;
 		this._utilCont = utilCont;
+		_sheederTimer.stop();
 	}
 
 	public void run() {
@@ -98,13 +97,15 @@ public class ControllerLogic {
 			_sheeder.stop();
 			_sheederTimer.stop();
 			_sheederTimer.reset();
-		} else if(_sheederTimer.get() >= 0.06) {
+		} else if(_sheederTimer.get() >= 0.09) {
 			_sheeder.stop();
 			_sheeder.feed();
 		} else if(_sheederTimer.get() > 0.0) {
 			_sheeder.stop();
 			_sheeder.shoot();
 		}
+		
+		//sheeder
 		if (_utilCont.getLeftTrigger() > .2)
 			_sheeder.feed();
 		else if (_utilCont.getRightTrigger() > .2)
@@ -116,10 +117,10 @@ public class ControllerLogic {
 		if(Math.abs(_utilCont.getLeftY()) > 0.2) {
 			manualFeeder = true;
 			if(isMaxHeight() && _utilCont.getLeftY()<0) {
-				_lifter.controlledMove(Math.abs(_utilCont.getLeftY()));
+				_lifter.controlledMove(0);
 			}
 			else if(isMinHeight() && _utilCont.getLeftY()>0) {
-				_lifter.controlledMove(Math.abs(_utilCont.getLeftY()));
+				_lifter.controlledMove(0);
 			} 
 			else {
 				_lifter.controlledMove(_utilCont.getLeftY());

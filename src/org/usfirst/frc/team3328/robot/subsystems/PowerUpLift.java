@@ -25,10 +25,10 @@ public class PowerUpLift implements Lift {
     public double _KI;
     public double _KD;
 	
-	public static final int SCALE_HIGH_POSITION = 33170; //80-78 in
-	public static final int SCALE_MID_POSITION = 27572; 
-	public static final int SCALE_LOW_POSITION = 21750;
-	public static final int SWITCH_POSITION = 11120;
+	public static final int SCALE_HIGH_POSITION = 35500; //80-78 in
+	public static final int SCALE_MID_POSITION = 30500; 
+	public static final int SCALE_LOW_POSITION = 25750;
+	public static final int SWITCH_POSITION = 15120;
 	public static final int EXCHANGE_FEED = 0; // 20 in
 	public static final int EXCHANGE_SHOOT = 0; //2 in
 	public static final int EXCHANGE_POSITION = 0;
@@ -129,11 +129,11 @@ public class PowerUpLift implements Lift {
 		_talon.setSelectedSensorPosition(0, _talonLoopIdx, _talonTimeout);
 	}
 	public void unfold() {
-		_talon.set(ControlMode.Position, 300);
+		_talon.set(ControlMode.Position, 4000);
 		Timer timer = new Timer();
 		timer.reset();
 		timer.start();
-		while(timer.get()< 1) {;}
-		this.calibrate();
+		while(timer.get()< 2) {;}
+//		this.calibrate();
 	}
 }

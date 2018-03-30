@@ -92,7 +92,7 @@ public class Robot extends IterativeRobot {
 				new PWMVictorSPX(4), 
 				new PWMVictorSPX(5));
 		lift = new PowerUpLift(
-				0.06, 0, 0,
+				0.07, 0, 0,
 				new TalonSRX(3), 
 				new DigitalInput(6));
 		climb = new PowerUpClimb(
@@ -111,7 +111,7 @@ public class Robot extends IterativeRobot {
 				new PowerUpXbox(0),
 				new PowerUpXbox(1));
 
-		auto = new Auton(0, leftPID, rightPID, leftTurningPID, rightTurningPID, 
+		auto = new Auton(leftPID, rightPID, leftTurningPID, rightTurningPID, 
 				leftEncoder, rightEncoder, gyro, lift, sheeder);
 
 		lift.init();
@@ -144,6 +144,7 @@ public class Robot extends IterativeRobot {
 			rightPID.disable();
 			leftTurningPID.disable();
 			rightTurningPID.disable();
+//			lift.calibrate();
 //			lift.autoMoveTo(lift.getExchangeFeed());
 			firstTimeRunning = false;
 		}

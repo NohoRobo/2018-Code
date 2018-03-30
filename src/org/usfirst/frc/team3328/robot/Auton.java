@@ -6,6 +6,7 @@ import org.usfirst.frc.team3328.robot.utilities.PigeonGyroPIDInput;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -42,8 +43,8 @@ public class Auton {
 	int _autonSelected;
 	
 	double speedThresh = 2;
-	double allowableErrorDistance = 12;
-	double allowableErrorAngle = 3;	
+	double allowableErrorDistance = 8;
+	double allowableErrorAngle = 10;	
 	double initAngle = 0;
 	double finalAngle = 0;
 	
@@ -52,15 +53,14 @@ public class Auton {
 	boolean rightPos;
 	boolean midPos;
 	boolean leftPos;
+	boolean midRightPos;
 	boolean firstTime = true;
 	boolean turning = false;
 	
-	//?TODO Delete autonSelected
-	public Auton(int autonSelected, PIDController leftPID, PIDController rightPID, 
+	public Auton(PIDController leftPID, PIDController rightPID, 
 				 PIDController leftTurningPID, PIDController rightTurningPID,
 				 Encoder leftEncoder, Encoder rightEncoder, PigeonGyroPIDInput gyro,
 				 Lift lifter, Sheeder sheeder) {
-		this._autonSelected = autonSelected;
 		this._leftPID = leftPID;
 		this._rightPID = rightPID;
 		this._leftTurningPID = leftTurningPID;
@@ -98,26 +98,29 @@ public class Auton {
 		fieldData = DriverStation.getInstance().getGameSpecificMessage();
 		leftSwitch = fieldData.charAt(0) == 'L';
 		leftScale = fieldData.charAt(1) == 'L';
-		//rightPos = autoSelected.toLowerCase().charAt(0) == 'r';
-		//midPos = autoSelected.toLowerCase().charAt(0) == 'm';
-		//leftPos = autoSelected.toLowerCase().charAt(0) == 'l';
+		rightPos = autoSelected.toLowerCase().charAt(0) == 'r';
+		midPos = autoSelected.toLowerCase().charAt(0) == 'm';
+		leftPos = autoSelected.toLowerCase().charAt(0) == 'l';
+		midRightPos = autoSelected.toLowerCase().charAt(0) == 'x';
 		
 		
-/*		if(leftPos && leftSwitch && leftScale) {
-			//_autonSelected = 1;
-			_autonSelected = 10;
+		if(leftPos && leftSwitch && leftScale) {
+			//_autonSelected = 1; //scale switch
+			_autonSelected = 10; //single switch
 		}  else if(leftPos && !leftSwitch && leftScale) {
 			_autonSelected = 2;
 		}  else if(leftPos && leftSwitch && !leftScale) {
-			_autonSelected = 3;
-			//_autonSelected = 10;
+			//_autonSelected = 3; //double switch
+			//_autonSelected = 10; //single switch
+			_autonSelected = 13; //cross Scale
 		}  else if(leftPos && !leftSwitch && !leftScale) {
 			_autonSelected = 4;
 		}  else if(rightPos && leftSwitch && leftScale) {
 			_autonSelected = 4;
 		}  else if(rightPos && !leftSwitch && leftScale) {
-			_autonSelected = 5;
-			//_autonSelected = 11;
+			//_autonSelected = 5; //double switch
+			//_autonSelected = 11; //single switch
+			_autonSelected = 12; //crossScale
 		}  else if(rightPos && leftSwitch && !leftScale) {
 			_autonSelected = 6;
 		}  else if(rightPos && !leftSwitch && !leftScale) {
@@ -131,30 +134,30 @@ public class Auton {
 			_autonSelected = 8;
 		}  else if(midPos && !leftSwitch && !leftScale) {
 			_autonSelected = 9;
-		} 
-*/		SmartDashboard.putNumber("Auto selected: ",_autonSelected);
+		} else if(midRightPos && leftSwitch) {
+			_autonSelected = 14;
+		} else if(midRightPos && !leftSwitch) {
+			_autonSelected = 15;
+		} else
+			_autonSelected = 42;
+		SmartDashboard.putNumber("Auto selected: ",_autonSelected);
 
+//		_autonSelected = 0;
+		
 		initDrivePID();
 		_lifter.init();
 	}
 	
 	public void run() {
-		if(firstTime) {
-//,			_lifter.calibrate();
-			firstTime = false;
-		}
+		unfold();
 		
-		moveD(130);
-/*
 		switch(_autonSelected){
 		case 0: //test
-			move(20);
-			turnLeftD(6*Math.PI);
-			turnRightD(6*Math.PI);
-			move(-20);
+			moveD(100);
+			turnLeftD(30);
 			_autonSelected = 42;
 			break;
-		case 1: //starting: L, switchL + scaleL
+		case 1: //starting: L, switchL + scaleL --- scale switch
 			move(303.75);
 			_sheeder.hold();
 			lift(_lifter.getScaleMid());
@@ -180,7 +183,7 @@ public class Auton {
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
-		case 2: //starting L, switch R + scale L
+		case 2: //starting L, switch R + scale L --- double scale
 			move(303.75);
 			_sheeder.hold();
 			lift(_lifter.getScaleMid());
@@ -208,7 +211,7 @@ public class Auton {
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
-		case 3: //Starting: L, switch L + scale R
+		case 3: //Starting: L, switch L + scale R -- double switch
 			move(149.83);
 			_sheeder.hold();
 			waitForPID();
@@ -238,11 +241,11 @@ public class Auton {
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
-		case 4: //Starting: L, switch R + scale R, Starting R, switch L + scale L
+		case 4: //Starting: L, switch R + scale R, Starting R, switch L + scale L --- move forward
 			moveD(160);
 			_autonSelected = 42;
 			break;
-		case 5: //Starting: R, switch R + scale L
+		case 5: //Starting: R, switch R + scale L --- double switch
 			move(149.83);
 			_sheeder.hold();
 			waitForPID();
@@ -272,7 +275,7 @@ public class Auton {
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
-		case 6: //starting R, switch L + scale R 
+		case 6: //starting R, switch L + scale R ---double scale
 			move(303.75);
 			_sheeder.hold();
 			lift(_lifter.getScaleMid());
@@ -300,7 +303,7 @@ public class Auton {
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
-		case 7: //starting: R, switchR + scaleR
+		case 7: //starting: R, switchR + scaleR --- scale switch
 			move(303.75);
 			_sheeder.hold();
 			lift(_lifter.getScaleMid());
@@ -326,18 +329,23 @@ public class Auton {
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
-		case 8: //starting: M, switchL + scaleLR
+		case 8: //starting: M, switchL + scaleLR ---double switch
 			move(10);
 			_sheeder.hold();
 			waitForPID();
-			turnLeftD(40.44);
-			moveD(109.06); 
-			turnRightD(40.44);
-			move(10); //was 1.5 sec wait
+			pause(1);
+			turnLeftD(40); //40.44
+			pause(1);
+			move(60); //109.06
 			lift(_lifter.getSwitch());
 			waitForPID();
+			pause(1);
+			turnRightD(40);
+			pause(1);
+			moveD(10); //was 1.5 sec wait
+			pause(1);
 			_sheeder.shoot();
-			move(-80.75);
+/*			move(-80.75);
 			_sheeder.stop();
 			lift(_lifter.getGround());
 			waitForPID();
@@ -352,11 +360,11 @@ public class Auton {
 			moveD(80.75);
 			lift(_lifter.getSwitch());
 			_sheeder.shoot();
-			pause(1);
+*/			pause(1);
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;	
-		case 9: //starting: M, switch R + scaleLR
+		case 9: //starting: M, switch R + scaleLR --- double switch
 			move(10);
 			_sheeder.hold();
 			waitForPID();
@@ -386,7 +394,7 @@ public class Auton {
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
-		case 10: //starting L: switch L + scale LR
+		case 10: //starting L: switch L + scale LR --- single switch
 			move(149.83);
 			_sheeder.hold();
 			waitForPID();
@@ -399,7 +407,7 @@ public class Auton {
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
-		case 11: //starting R: switch R + scale LR
+		case 11: //starting R: switch R + scale LR --- single switch
 			move(149.83);
 			_sheeder.hold();
 			waitForPID();
@@ -412,11 +420,60 @@ public class Auton {
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
+		case 12: //starting R: switch LR + scale L --- single scale
+			move(214);
+			_sheeder.hold();
+			waitForPID();
+			turnRightD(90);
+			moveD(-235.5);
+			turnLeftD(71);
+			lift(_lifter.getScaleHigh());
+			pause(3);
+			moveD(50);
+			_sheeder.shoot();
+			pause(2);
+			_sheeder.stop();
+			moveD(-20);
+			_autonSelected = 42;
+			break;
+		case 13: //starting L: switch LR + scale R --- single scale
+			move(214);
+			_sheeder.hold();
+			waitForPID();
+			turnLeftD(90);
+			moveD(-235.5);
+			turnRightD(71);
+			lift(_lifter.getScaleHigh());
+			pause(3);
+			moveD(50);
+			_sheeder.shoot();
+			pause(2);
+			_sheeder.stop();
+			moveD(-20);
+			_autonSelected = 42;
+			break;
+		case 14: //starting MR: L switch 
+			move(96);
+			_sheeder.hold();
+			_lifter.autoMoveTo(_lifter.getSwitch());
+			waitForPID();
+			_autonSelected = 42;
+			break;
+		case 15: //starting MR: R switch
+			move(96);
+			_sheeder.hold();
+			_lifter.autoMoveTo(_lifter.getSwitch());
+			waitForPID();
+			_sheeder.setTo(-1);
+			pause(2);
+			_sheeder.stop();
+			_autonSelected = 42;
+			break;
 		case 42: break;
 		default: break;
 		}
 		_speedTimer.stop();
-*/		
+		
 		_leftPID.disable();
 		_rightPID.disable();
 		_leftTurningPID.disable();
@@ -424,6 +481,7 @@ public class Auton {
 	}
 	
 	public void turnLeftD(double angle) {
+		_gyro.setPIDSourceType(PIDSourceType.kDisplacement);
 		turning = true;
 		_leftTurningPID.disable();
 		_rightTurningPID.disable();
@@ -452,8 +510,8 @@ public class Auton {
 		_rightPID.disable();
 		_leftPID.enable();
 		_rightPID.enable();
-		_leftPID.setPID(-0.006 ,0, 0);
-		_rightPID.setPID(-0.006 ,0, 0);
+		_leftPID.setPID(-0.04 ,0, 0.05);
+		_rightPID.setPID(-0.04 ,0, 0.05);
 		_leftPID.setSetpoint(_leftEncoder.getDistance() - distance);
 		_rightPID.setSetpoint(_rightEncoder.getDistance() - distance);
 	}
@@ -503,7 +561,7 @@ public class Auton {
 			} else {
 				escCount = 0;
 			}
-			if(escCount > 6) {
+			if(escCount > 4) {
 				break;
 			}
 		}
