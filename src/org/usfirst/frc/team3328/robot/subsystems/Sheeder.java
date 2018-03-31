@@ -12,6 +12,8 @@ public interface Sheeder {
 
 	void hold();
 
+	void rotateBox();
+
 	
 
 }

@@ -16,6 +16,8 @@ public class PowerUpSheeder implements Sheeder {
 		this.ls = leftSheeder;
 		this.rs = rightSheeder;
 	}
+	
+	@Override
 	public void setTo(double _speed) {
 		ls.set(_speed); 
 		rs.set(-_speed);
@@ -43,5 +45,11 @@ public class PowerUpSheeder implements Sheeder {
 	public void stop() {
 		ls.set(0); 
 		rs.set(0);
+	}
+	
+	@Override
+	public void rotateBox() {
+		ls.set(0.7);
+		rs.set(0.2);
 	}
 }

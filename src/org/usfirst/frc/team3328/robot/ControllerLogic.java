@@ -89,7 +89,7 @@ public class ControllerLogic {
 		}
 		
 		//sheeder - choo choo
-		if (_utilCont.getButtonRelease(Buttons.BACK)) {
+	/*	if (_utilCont.getButtonRelease(Buttons.BACK)) {
 			_sheederTimer.reset();
 			_sheederTimer.start();
 		}
@@ -103,6 +103,20 @@ public class ControllerLogic {
 		} else if(_sheederTimer.get() > 0.0) {
 			_sheeder.stop();
 			_sheeder.shoot();
+		}
+	*/
+		
+		//sheeder - rotate box
+		if (_utilCont.getButtonRelease(Buttons.BACK)) {
+			_sheederTimer.reset();
+			_sheederTimer.start();
+		}
+		if(_sheederTimer.get() >= 0.2) {
+			_sheeder.stop();
+			_sheederTimer.stop();
+			_sheederTimer.reset();
+		} else if (_sheederTimer.get() > 0.0){
+			_sheeder.rotateBox();
 		}
 		
 		//sheeder
@@ -164,14 +178,12 @@ public class ControllerLogic {
 		}
 		if( _utilCont.getRightY() < -0.2 && climbEnabled) {
 			_climb.winch(_utilCont.getRightY());
-		} else if (_utilCont.getRightY() > 0.2 && _utilCont.getButtonPress(Buttons.LBUMP)){
+		} else if (_utilCont.getRightY() > 0.2 && _utilCont.getButtonPress(Buttons.LBUMP) && _utilCont.getButtonPress(Buttons.RBUMP)){
 			_climb.winch(_utilCont.getRightY());
 		} else {
 			_climb.winch(0);
 		} 
 		
-	
-
 //		SmartDashboard.putNumber("choo choo timer", _sheederTimer.get());
 //		SmartDashboard.putNumber("X Joystick Value", _driveCont.getX());
 //		SmartDashboard.putNumber("Y Joystick Value", _driveCont.getLeftY());

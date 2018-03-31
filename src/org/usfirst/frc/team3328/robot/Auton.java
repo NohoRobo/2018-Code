@@ -44,7 +44,7 @@ public class Auton {
 	
 	double speedThresh = 2;
 	double allowableErrorDistance = 8;
-	double allowableErrorAngle = 10;	
+	double allowableErrorAngle = 5;	
 	double initAngle = 0;
 	double finalAngle = 0;
 	
@@ -89,6 +89,12 @@ public class Auton {
 		_rightPID.setSetpoint(0);
 		_leftTurningPID.setSetpoint(0);
 		_rightTurningPID.setSetpoint(0);
+		
+		_leftPID.setOutputRange(-0.3, 0.3);
+		_rightPID.setOutputRange(-0.3, 0.3);
+		_leftTurningPID.setOutputRange(-0.3, 0.3);
+		_rightTurningPID.setOutputRange(-0.3, 0.3);
+
 		
 	}
 	
@@ -184,18 +190,19 @@ public class Auton {
 			_autonSelected = 42;
 			break;
 		case 2: //starting L, switch R + scale L --- double scale
-			move(303.75);
+			move(180); //303.75
 			_sheeder.hold();
-			lift(_lifter.getScaleMid());
+			lift(_lifter.getScaleHigh());
 			waitForPID();
-			turnRightD(90);
+			turnRightD(18);
+			moveD(75);
 			_sheeder.shoot();
-			turnRightD(90);
-			_sheeder.stop();
+//			turnLeftD(90);
+/*			_sheeder.stop();
 			move(74.68);
 			lift(_lifter.getGround());
 			waitForPID();
-			turnLeftD(39.84);
+			turnRightD(39.84);
 			move(33.73);
 			_sheeder.feed();
 			waitForPID(); //possibly chu chu
@@ -204,10 +211,10 @@ public class Auton {
 			move(-18.41);
 			lift(_lifter.getScaleHigh());
 			waitForPID();
-			turnLeftD(130.39);
+			turnRightD(130.39);
 			moveD(51.07);
 			_sheeder.shoot();
-			pause(1);
+*/			pause(1);
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
@@ -276,14 +283,15 @@ public class Auton {
 			_autonSelected = 42;
 			break;
 		case 6: //starting R, switch L + scale R ---double scale
-			move(303.75);
+			move(180); //303.75
 			_sheeder.hold();
-			lift(_lifter.getScaleMid());
+			lift(_lifter.getScaleHigh());
 			waitForPID();
-			turnLeftD(90);
+			turnLeftD(18);
+			moveD(75);
 			_sheeder.shoot();
-			turnLeftD(90);
-			_sheeder.stop();
+//			turnLeftD(90);
+/*			_sheeder.stop();
 			move(74.68);
 			lift(_lifter.getGround());
 			waitForPID();
@@ -299,7 +307,7 @@ public class Auton {
 			turnRightD(130.39);
 			moveD(51.07);
 			_sheeder.shoot();
-			pause(1);
+*/			pause(1);
 			_sheeder.stop();
 			_autonSelected = 42;
 			break;
@@ -333,17 +341,12 @@ public class Auton {
 			move(10);
 			_sheeder.hold();
 			waitForPID();
-			pause(1);
-			turnLeftD(40); //40.44
-			pause(1);
-			move(60); //109.06
+			turnLeftD(31.44); 
+			move(92.06);
 			lift(_lifter.getSwitch());
 			waitForPID();
-			pause(1);
-			turnRightD(40);
-			pause(1);
-			moveD(10); //was 1.5 sec wait
-			pause(1);
+			turnRightD(31.44);
+			moveD(12); //was 1.5 sec wait
 			_sheeder.shoot();
 /*			move(-80.75);
 			_sheeder.stop();
@@ -368,32 +371,31 @@ public class Auton {
 			move(10);
 			_sheeder.hold();
 			waitForPID();
-			turnRightD(37.09);
-			moveD(104.05); 
-			turnLeftD(37.09);
-			move(10); //was 1.5 sec wait
+			turnRightD(31.44); 
+			move(90.06);
 			lift(_lifter.getSwitch());
 			waitForPID();
+			turnLeftD(31.44);
+			moveD(12); //was 1.5 sec wait
 			_sheeder.shoot();
-			move(-70.75);
+/*			move(-80.75);
 			_sheeder.stop();
 			lift(_lifter.getGround());
 			waitForPID();
-			turnLeftD(45);
+			turnRightD(45);
 			move(68.71);
 			_sheeder.feed();
 			waitForPID();
 			move(-68.71);
 			_sheeder.hold();
 			waitForPID();
-			turnRightD(45);
+			turnLeftD(45);
 			moveD(80.75);
 			lift(_lifter.getSwitch());
 			_sheeder.shoot();
-			pause(1);
+*/			pause(1);
 			_sheeder.stop();
 			_autonSelected = 42;
-			break;
 		case 10: //starting L: switch L + scale LR --- single switch
 			move(149.83);
 			_sheeder.hold();
@@ -464,10 +466,10 @@ public class Auton {
 			_sheeder.hold();
 			_lifter.autoMoveTo(_lifter.getSwitch());
 			waitForPID();
-			_sheeder.setTo(-1);
+/*			_sheeder.setTo(-1);
 			pause(2);
 			_sheeder.stop();
-			_autonSelected = 42;
+*/			_autonSelected = 42;
 			break;
 		case 42: break;
 		default: break;
@@ -481,7 +483,6 @@ public class Auton {
 	}
 	
 	public void turnLeftD(double angle) {
-		_gyro.setPIDSourceType(PIDSourceType.kDisplacement);
 		turning = true;
 		_leftTurningPID.disable();
 		_rightTurningPID.disable();
@@ -490,11 +491,13 @@ public class Auton {
 		_leftTurningPID.enable();
 		_rightTurningPID.enable();
 		_gyro.setYaw(0, 10);
-		_leftTurningPID.setPID(-0.02, 0, 0);//tune
-		_rightTurningPID.setPID(0.02, 0, 0);
+		_gyro.setPIDSourceType(PIDSourceType.kDisplacement);
+		_leftTurningPID.setPID(-0.03, 0, 0);//tune
+		_rightTurningPID.setPID(0.03, 0, 0);
 		_leftTurningPID.setSetpoint(angle);
 		_rightTurningPID.setSetpoint(angle);
 		SmartDashboard.putNumber("Gyro Error", finalAngle - initAngle);
+		
 		waitForPID();
 	}
 	
@@ -510,8 +513,8 @@ public class Auton {
 		_rightPID.disable();
 		_leftPID.enable();
 		_rightPID.enable();
-		_leftPID.setPID(-0.04 ,0, 0.05);
-		_rightPID.setPID(-0.04 ,0, 0.05);
+		_leftPID.setPID(-0.04 ,0, 0);
+		_rightPID.setPID(-0.04 ,0, 0);
 		_leftPID.setSetpoint(_leftEncoder.getDistance() - distance);
 		_rightPID.setSetpoint(_rightEncoder.getDistance() - distance);
 	}
