@@ -53,6 +53,7 @@ public class Auton {
 	boolean rightPos;
 	boolean midPos;
 	boolean leftPos;
+	boolean scalePos;
 	boolean midRightPos;
 	boolean firstTime = true;
 	boolean turning = false;
@@ -90,7 +91,7 @@ public class Auton {
 		_leftTurningPID.setSetpoint(0);
 		_rightTurningPID.setSetpoint(0);
 		
-		_leftPID.setOutputRange(-0.3, 0.3);
+		_leftPID.setOutputRange(-0.3, 0.325);
 		_rightPID.setOutputRange(-0.3, 0.3);
 		_leftTurningPID.setOutputRange(-0.3, 0.3);
 		_rightTurningPID.setOutputRange(-0.3, 0.3);
@@ -108,7 +109,7 @@ public class Auton {
 		midPos = autoSelected.toLowerCase().charAt(0) == 'm';
 		leftPos = autoSelected.toLowerCase().charAt(0) == 'l';
 		midRightPos = autoSelected.toLowerCase().charAt(0) == 'x';
-		
+		scalePos = autoSelected.toLowerCase().charAt(0) == 'y';
 		
 		if(leftPos && leftSwitch && leftScale) {
 			//_autonSelected = 1; //scale switch
@@ -144,11 +145,21 @@ public class Auton {
 			_autonSelected = 14;
 		} else if(midRightPos && !leftSwitch) {
 			_autonSelected = 15;
-		} else
-			_autonSelected = 42;
+			
+		} else if(scalePos && !leftScale) {
+			_autonSelected = 16;
+		}
+		else if(scalePos && leftScale) {
+			_autonSelected = 17;
+		}
+			else {
+				_autonSelected = 42;
+		}
+			
+			
 		SmartDashboard.putNumber("Auto selected: ",_autonSelected);
 
-//		_autonSelected = 0;
+//		_autonSelected = 6;
 		
 		initDrivePID();
 		_lifter.init();
@@ -160,7 +171,7 @@ public class Auton {
 		switch(_autonSelected){
 		case 0: //test
 			moveD(100);
-			turnLeftD(30);
+	//		turnLeftD(30);
 			_autonSelected = 42;
 			break;
 		case 1: //starting: L, switchL + scaleL --- scale switch
@@ -466,10 +477,29 @@ public class Auton {
 			_sheeder.hold();
 			_lifter.autoMoveTo(_lifter.getSwitch());
 			waitForPID();
-/*			_sheeder.setTo(-1);
+			//_sheeder.setTo(-1);
+			//pause(2);
+			//_sheeder.stop();
+			_autonSelected = 42;
+			break;
+		case 16:
+			_lifter.autoMoveTo(_lifter.getScaleHigh());
+			_rightPID.setOutputRange(-0.32, 0.32);
+			_leftPID.setOutputRange(-0.30, 0.30);
+			moveD(260);
+			_sheeder.setTo(-1);
 			pause(2);
 			_sheeder.stop();
-*/			_autonSelected = 42;
+			break;
+		case 17:
+			move(96);
+			_sheeder.hold();
+			_lifter.autoMoveTo(_lifter.getSwitch());
+			waitForPID();
+			//_sheeder.setTo(-1);
+			//pause(2);
+			//_sheeder.stop();
+			_autonSelected = 42;
 			break;
 		case 42: break;
 		default: break;
@@ -497,7 +527,6 @@ public class Auton {
 		_leftTurningPID.setSetpoint(angle);
 		_rightTurningPID.setSetpoint(angle);
 		SmartDashboard.putNumber("Gyro Error", finalAngle - initAngle);
-		
 		waitForPID();
 	}
 	

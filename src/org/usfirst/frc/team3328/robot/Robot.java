@@ -6,7 +6,9 @@ import org.usfirst.frc.team3328.robot.subsystems.Lift;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpClimb;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpDriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
+import org.usfirst.frc.team3328.robot.subsystems.PowerUpRamp;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpSheeder;
+import org.usfirst.frc.team3328.robot.subsystems.Ramp;
 import org.usfirst.frc.team3328.robot.subsystems.Sheeder;
 import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox;
 import org.usfirst.frc.team3328.robot.utilities.PigeonGyroPIDInput;
@@ -37,6 +39,7 @@ public class Robot extends IterativeRobot {
 	DriveSystem driveSystem;
 	Lift lift;
 	Sheeder sheeder;
+	Ramp ramp;
 	Climb climb;
 
 	Encoder leftEncoder;
@@ -95,6 +98,10 @@ public class Robot extends IterativeRobot {
 				0.07, 0, 0,
 				new TalonSRX(3), 
 				new DigitalInput(6));
+		ramp = new PowerUpRamp(
+				new Spark(9), //notbeingused 
+				new Servo(6), 
+				new Servo(7));
 		climb = new PowerUpClimb(
 				new Spark(3),
 				new Spark(2));
@@ -107,6 +114,7 @@ public class Robot extends IterativeRobot {
 				driveSystem,
 				sheeder, 
 				lift, 
+				ramp,
 				climb,
 				new PowerUpXbox(0),
 				new PowerUpXbox(1));

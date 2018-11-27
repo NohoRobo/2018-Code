@@ -4,6 +4,7 @@ import org.usfirst.frc.team3328.robot.subsystems.Lift;
 import org.usfirst.frc.team3328.robot.subsystems.Climb;
 import org.usfirst.frc.team3328.robot.subsystems.DriveSystem;
 import org.usfirst.frc.team3328.robot.subsystems.PowerUpLift;
+import org.usfirst.frc.team3328.robot.subsystems.Ramp;
 import org.usfirst.frc.team3328.robot.subsystems.Sheeder;
 import org.usfirst.frc.team3328.robot.utilities.LogLevel;
 import org.usfirst.frc.team3328.robot.utilities.Logger;
@@ -12,6 +13,11 @@ import org.usfirst.frc.team3328.robot.utilities.PowerUpXbox.Buttons;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+//import org.apache.log4j.Logger;
+//import java.util.logging.Logger;
+
+
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
@@ -24,6 +30,7 @@ public class ControllerLogic {
 	DriveSystem _driveSystem;
 	Sheeder _sheeder;
 	Lift _lifter;
+	Ramp _ramp; 
 	Climb _climb;
 	
 	Controller _driveCont;
@@ -39,6 +46,8 @@ public class ControllerLogic {
 	Timer _sheederTimer = new Timer();
 	Timer driveMacroTimer = new Timer();
 
+	//	Logger logger = new Logger();
+
 	final double deadzone = .15;
 	double restraint = 1;
 	int maxHeight = 36400;
@@ -51,7 +60,7 @@ public class ControllerLogic {
 
 	public ControllerLogic(Encoder leftTeleopEncoder, Encoder rightTeleopEncoder, PIDController leftTeleopPID,
 						   PIDController rightTeleopPID, DriveSystem driveSystem,
-						   Sheeder sheeder, Lift lifter, Climb climb, Controller driveCont, Controller utilCont) {
+						   Sheeder sheeder, Lift lifter, Ramp ramp, Climb climb, Controller driveCont, Controller utilCont) {
 		this._leftTeleopEncoder = leftTeleopEncoder;
 		this._rightTeleopEncoder = rightTeleopEncoder;
 		this._leftTeleopPID = leftTeleopPID;
@@ -62,6 +71,7 @@ public class ControllerLogic {
 		this._driveSystem = driveSystem;
 		this._lifter = lifter;
 		this._sheeder = sheeder;
+		this._ramp = ramp;
 		this._climb = climb;
 		
 		this._driveCont = driveCont;
@@ -72,6 +82,7 @@ public class ControllerLogic {
 	public void run() {
 		
 		//drive
+		SmartDashboard.putNumber("tester", _driveCont.getRightTrigger());
 		if(!macroControl) {
 			_driveSystem.setMotors(speedOf(
 				_driveCont.getRightTrigger()-_driveCont.getLeftTrigger()+
@@ -120,9 +131,9 @@ public class ControllerLogic {
 		}
 		
 		//sheeder
-		if (_utilCont.getLeftTrigger() > .2)
+		if (/*(_utilCont.getLeftTrigger() < _utilCont.getRightTrigger()) && */(_utilCont.getLeftTrigger() > .2))
 			_sheeder.feed();
-		else if (_utilCont.getRightTrigger() > .2)
+		else if (/*(_utilCont.getLeftTrigger() > _utilCont.getRightTrigger()) && */( _utilCont.getRightTrigger() > .2))
 			_sheeder.shoot();
 		else if(_sheederTimer.get()==0)
 			_sheeder.hold();
@@ -131,17 +142,22 @@ public class ControllerLogic {
 		if(Math.abs(_utilCont.getLeftY()) > 0.2) {
 			manualFeeder = true;
 			if(isMaxHeight() && _utilCont.getLeftY()<0) {
+				SmartDashboard.putNumber("liftStatus", 0);
 				_lifter.controlledMove(0);
 			}
 			else if(isMinHeight() && _utilCont.getLeftY()>0) {
+				SmartDashboard.putNumber("liftStatus", 1);
 				_lifter.controlledMove(0);
 			} 
+			
+			
 			else {
+				SmartDashboard.putNumber("liftStatus", 2);
 				_lifter.controlledMove(_utilCont.getLeftY());
 			}
 		} 
 		else if(manualFeeder = true) {
-			if(_lifter.getEncoderValue()< 500) {
+			if(_lifter.getEncoderValue()< 1000) {
 				SmartDashboard.putBoolean("iftHoldOn", true);
 				_lifter.controlledMove(0.2);
 			}
@@ -171,7 +187,36 @@ public class ControllerLogic {
 		}
 */		
 		//button for exchange?
-				
+		
+		
+/*		//PID Move
+		if (_driveCont.getButtonRelease(Buttons.BACK)) {
+			_leftTeleopPID.setSetpoint(_leftTeleopEncoder.getDistance() + 4);
+			_rightTeleopPID.setSetpoint(_rightTeleopEncoder.getDistance() + 4);
+			_leftTeleopPID.setPID(-0.06 ,0, 0);
+			_rightTeleopPID.setPID(-0.06 ,0, 0); //tune later *lower than auto values* 
+			_leftTeleopPID.enable();
+			_rightTeleopPID.enable();
+			driveMacroTimer.reset();
+			driveMacroTimer.start();
+			macroControl = true;
+		}
+		if(driveMacroTimer.get()>0.75) {
+			_leftTeleopPID.disable();
+			_rightTeleopPID.disable();
+			macroControl = false;
+		}
+*/		
+/*		//ramp
+		if(_ramp.isDeployed()) {
+			if(_utilCont.getRightY() > 0.2 || _utilCont.getRightY() < -0.2) 
+				_ramp.winch(_utilCont.getRightY());
+			else 
+				_ramp.winch(0);
+		} else if(_utilCont.getButtonRelease(Buttons.RIGHTSTICK)) 
+			_ramp.deploy();
+		
+*/			
 		//climb - testing
 		if(_utilCont.getButtonRelease(Buttons.RIGHTSTICK)) {
 			climbEnabled = true;
